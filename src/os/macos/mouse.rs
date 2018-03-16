@@ -15,6 +15,7 @@ pub struct Location {
 impl Iterator for Location {
     type Item = (f64, f64);
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         unsafe { Some(Self::get_from(self.ns_event)) }
     }
