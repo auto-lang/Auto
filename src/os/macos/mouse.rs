@@ -1,5 +1,6 @@
 //! Mouse automation utilities.
 
+use std::fmt;
 use std::mem;
 
 use objc::runtime::Class;
@@ -10,6 +11,12 @@ use super::{CGPoint, NS_EVENT};
 #[derive(Copy, Clone)]
 pub struct Location {
     ns_event: &'static Class
+}
+
+impl fmt::Debug for Location {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("Location").finish()
+    }
 }
 
 impl Iterator for Location {
