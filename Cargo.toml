@@ -13,3 +13,6 @@ lazy_static = "1.0"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2"
+
+[build-dependencies]
+version_check = "0.1"

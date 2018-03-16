@@ -51,3 +51,27 @@ impl Location {
         Location { ns_event: &NS_EVENT }
     }
 }
+
+#[cfg(all(test, nightly))]
+mod benches {
+    use super::*;
+    use test::{Bencher, black_box};
+
+    #[bench]
+    fn location_get_100(b: &mut Bencher) {
+        b.iter(|| {
+            for _ in 0..100 {
+                black_box(Location::get());
+            }
+        });
+    }
+
+    #[bench]
+    fn location_iter_100(b: &mut Bencher) {
+        b.iter(|| {
+            for loc in Location::iter().take(100) {
+                black_box(loc);
+            }
+        })
+    }
+}
