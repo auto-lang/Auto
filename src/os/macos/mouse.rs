@@ -7,7 +7,10 @@ use objc::runtime::Class;
 
 use super::{CGPoint, NS_EVENT};
 
-/// A type that can be used to get the current mouse location.
+/// A type that can be used to get the current mouse location as an (x, y) pair.
+///
+/// In macOS, values near 0 for x and y are located at the bottom, left-hand
+/// side of the screen.
 #[derive(Copy, Clone)]
 pub struct Location {
     ns_event: &'static Class
