@@ -2,3 +2,9 @@
 name = "auto"
 version = "0.0.1"
 authors = ["Nikolai Vazquez"]
+
+[dependencies]
+lazy_static = "1.0"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc = "0.2"
