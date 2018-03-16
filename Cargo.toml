@@ -1,0 +1,4 @@
+[package]
+name = "auto"
+version = "0.0.1"
+authors = ["Nikolai Vazquez"]
