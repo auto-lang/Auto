@@ -4,6 +4,7 @@
 //! | :-------------------------- | :--------------------------- |
 //! | `ANSI_` prefix              | **yes** |
 //! | `RETURN` through `UP_ARROW` | **no**  |
+//! | `JIS_` prefix               | **yes** |
 
 #![allow(missing_docs)]
 
@@ -82,6 +83,7 @@ keys! {
     ANSI_RIGHT_BRACKET    = 0x1E,
     ANSI_SEMICOLON        = 0x29,
     ANSI_SLASH            = 0x2C,
+
     // Independent of keyboard layout
     CAPS_LOCK       = 0x39,
     COMMAND         = 0x37,
@@ -131,4 +133,11 @@ keys! {
     UP_ARROW        = 0x7E,
     VOLUME_DOWN     = 0x49,
     VOLUME_UP       = 0x48,
+
+    // JIS keyboards only
+    JIS_YEN             = 0x5D,
+    JIS_UNDERSCORE      = 0x5E,
+    JIS_KEYPAD_COMMA    = 0x5F,
+    JIS_EISU            = 0x66,
+    JIS_KANA            = 0x68,
 }
