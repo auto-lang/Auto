@@ -48,16 +48,10 @@ pub enum Button {
     Right,
 }
 
-declare_event!("A mouse event that can be posted into the Quartz event stream.");
-
-impl Event {
-    /// Creates a new mouse event for `button` of `kind` at `location`.
-    ///
-    /// This function allocates a new `CGEvent`.
-    pub fn new(button: Button, kind: EventKind, location: Location) -> Event {
+impl From<(Button, EventKind)> for super::CGEventType {
+    fn from(pair: (Button, EventKind)) -> Self {
         use super::CGEventType::*;
-
-        let event_type = match (button, kind) {
+        match pair {
             (Button::Left,   EventKind::Down)    => LeftMouseDown,
             (Button::Left,   EventKind::Up)      => LeftMouseUp,
             (Button::Left,   EventKind::Moved)   => MouseMoved,
@@ -66,11 +60,21 @@ impl Event {
             (Button::Right,  EventKind::Up)      => RightMouseUp,
             (Button::Right,  EventKind::Moved)   => MouseMoved,
             (Button::Right,  EventKind::Dragged) => RightMouseDragged,
-        };
+        }
+    }
+}
 
+declare_event!("A mouse event that can be posted into the Quartz event stream.");
+
+impl Event {
+    /// Creates a new mouse event for `button` of `kind` at `location`.
+    ///
+    /// This function allocates a new `CGEvent`.
+    pub fn new(button: Button, kind: EventKind, location: Location) -> Event {
+        use super::CGEventType::*;
         unsafe { Event(super::Event(CGEventCreateMouseEvent(
             ptr::null(),
-            event_type,
+            (button, kind).into(),
             location.into(),
             button as raw::c_int,
         ))) }
