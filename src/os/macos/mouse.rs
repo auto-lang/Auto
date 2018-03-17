@@ -5,7 +5,7 @@ use std::os::raw;
 
 use objc::runtime::Class;
 
-use super::{CGEvent, CGEventPost, CGEventType, CGPoint, NS_EVENT};
+use super::{CGEvent, CGEventType, CGPoint, NS_EVENT};
 
 extern {
     fn CGEventCreateMouseEvent(
@@ -92,7 +92,7 @@ impl Event {
     /// Posts `self` to the Quartz event stream at the event location.
     #[inline]
     pub fn post(&self, location: super::EventLocation) {
-        unsafe { CGEventPost(location as raw::c_int, self.0) };
+        unsafe { super::CGEventPost(location as raw::c_int, self.0) };
     }
 }
 
