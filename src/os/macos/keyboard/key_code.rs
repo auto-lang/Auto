@@ -5,16 +5,11 @@
 //! | `ANSI_` prefix              | **yes** |
 //! | `RETURN` through `UP_ARROW` | **no**  |
 
+#![allow(missing_docs)]
+
 macro_rules! keys {
-    ($($name:ident = $val:expr),+ $(,)*) => {
-        keys! { $(
-            concat!("Key code for ", stringify!($name), ".");
-            $name = $val,
-        )+ }
-    };
-    ($($doc:expr; $name:ident = $val:expr,)+) => {
+    ($($name:ident = $val:expr,)+) => {
         $(
-            #[doc = $doc]
             pub const $name: u16 = $val;
         )+
     };
