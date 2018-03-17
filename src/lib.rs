@@ -14,3 +14,7 @@ extern crate lazy_static;
 extern crate objc;
 
 pub mod os;
+
+mod private {
+    pub trait Priv {}
+}
