@@ -38,6 +38,13 @@ pub struct Event(CGEvent);
 unsafe impl Send for Event {}
 unsafe impl Sync for Event {}
 
+impl Clone for Event {
+    #[inline]
+    fn clone(&self) -> Event {
+        unsafe { Event(super::CGEventCreateCopy(self.0)) }
+    }
+}
+
 impl Drop for Event {
     fn drop(&mut self) {
         unsafe { super::CFRelease(self.0) };

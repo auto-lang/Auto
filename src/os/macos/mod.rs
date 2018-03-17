@@ -13,6 +13,8 @@ extern {
     fn CFRelease(_: *mut raw::c_void);
 
     fn CGEventPost(tap_location:raw::c_int, event: CGEvent);
+
+    fn CGEventCreateCopy(event: CGEvent) -> CGEvent;
 }
 
 pub mod mouse;
