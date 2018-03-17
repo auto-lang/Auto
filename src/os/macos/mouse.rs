@@ -176,10 +176,10 @@ mod benches {
     use test::{Bencher, black_box};
 
     #[bench]
-    fn location_get_100(b: &mut Bencher) {
+    fn location_100(b: &mut Bencher) {
         b.iter(|| {
             for _ in 0..100 {
-                black_box(LocationIter::get());
+                black_box(location());
             }
         });
     }
@@ -187,7 +187,7 @@ mod benches {
     #[bench]
     fn location_iter_100(b: &mut Bencher) {
         b.iter(|| {
-            for loc in LocationIter::iter().take(100) {
+            for loc in location_iter().take(100) {
                 black_box(loc);
             }
         })
