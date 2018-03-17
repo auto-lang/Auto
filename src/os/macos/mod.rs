@@ -42,6 +42,7 @@ struct CGPoint {
 }
 
 type CGEvent = *mut raw::c_void;
+type CGEventSource = *const raw::c_void;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

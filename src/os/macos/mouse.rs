@@ -5,11 +5,11 @@ use std::os::raw;
 
 use objc::runtime::Class;
 
-use super::{CGEvent, CGEventType, CGPoint, NS_EVENT};
+use super::{CGEvent, CGEventType, CGEventSource, CGPoint, NS_EVENT};
 
 extern {
     fn CGEventCreateMouseEvent(
-        source: *const raw::c_void,
+        source: CGEventSource,
         mouse_type: CGEventType,
         mouse_cursor_position: CGPoint,
         mouse_button: raw::c_int,
@@ -71,7 +71,6 @@ impl Event {
     ///
     /// This function allocates a new `CGEvent`.
     pub fn new(button: Button, kind: EventKind, location: Location) -> Event {
-        use super::CGEventType::*;
         unsafe { Event(super::Event(CGEventCreateMouseEvent(
             ptr::null(),
             (button, kind).into(),

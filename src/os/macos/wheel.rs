@@ -3,14 +3,15 @@
 use std::os::raw;
 use std::ptr;
 
-use super::{CGEvent, CGEventType};
+use super::{CGEvent, CGEventSource};
 
 extern {
     fn CGEventCreateScrollWheelEvent(
-        source: *const raw::c_void,
+        source: CGEventSource,
         units: raw::c_int,
         wheelCount: u32,
-        wheel1: i32, ...
+        wheel1: i32,
+        ...
     ) -> CGEvent;
 }
 
@@ -49,8 +50,6 @@ impl Event {
     /// # }
     /// ```
     pub fn new<W: Wheels>(unit: ScrollUnit, wheels: W) -> Event {
-        use super::CGEventType::*;
-
         let slice = wheels.as_ref();
         let count = slice.len() as u32;
 
