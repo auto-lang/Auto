@@ -9,13 +9,6 @@ macro_rules! declare_event {
             fn from(subclass: Event) -> Self { subclass.0 }
         }
 
-        impl ::std::fmt::Debug for Event {
-            #[inline]
-            fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-                self.0.fmt(f)
-            }
-        }
-
         impl ::std::ops::Deref for Event {
             type Target = super::Event;
 
