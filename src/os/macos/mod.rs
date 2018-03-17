@@ -1,23 +1,26 @@
 //! 🏎️ macOS-specific functionality.
 
+#![allow(improper_ctypes)]
 #![allow(non_snake_case)]
 
+use std::fmt;
 use std::os::raw;
+use std::ptr;
 
 use objc::runtime::Class;
 use objc::{Encode, Encoding};
 
 #[link(name = "Cocoa", kind = "framework")]
 extern {
-    fn CFRelease(_: *mut raw::c_void);
+    fn CFRelease(_: NonNull);
 
-    fn CGEventPost(tap_location:raw::c_int, event: CGEvent);
+    fn CGEventPost(tap_location: raw::c_int, event: NonNull);
 
-    fn CGEventCreateCopy(event: CGEvent) -> CGEvent;
+    fn CGEventCreateCopy(event: NonNull) -> CFObject;
 
-    fn CGEventGetFlags(event: CGEvent) -> EventFlags;
+    fn CGEventGetFlags(event: NonNull) -> EventFlags;
 
-    fn CGEventSetFlags(event: CGEvent, flags: EventFlags);
+    fn CGEventSetFlags(event: NonNull, flags: EventFlags);
 }
 
 #[macro_use]
@@ -30,6 +33,28 @@ pub mod wheel;
 lazy_static! {
     static ref NS_EVENT: &'static Class = Class::get("NSEvent").unwrap();
 }
+
+type NonNull = ptr::NonNull<raw::c_void>;
+
+#[repr(C)]
+struct CFObject(NonNull);
+
+impl Drop for CFObject {
+    #[inline]
+    fn drop(&mut self) {
+        unsafe { CFRelease(self.0) }
+    }
+}
+
+impl fmt::Debug for CFObject {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+unsafe impl Send for CFObject {}
+unsafe impl Sync for CFObject {}
 
 cfg_if! {
     if #[cfg(target_pointer_width = "64")] {
@@ -46,7 +71,7 @@ struct CGPoint {
     y: CGFloat,
 }
 
-type CGEvent = *mut raw::c_void;
+type CGEvent = CFObject;
 type CGEventSource = *const raw::c_void;
 
 #[repr(C)]
@@ -96,20 +121,10 @@ unsafe impl Encode for CGPoint {
 #[derive(Debug)]
 pub struct Event(CGEvent);
 
-unsafe impl Send for Event {}
-unsafe impl Sync for Event {}
-
 impl Clone for Event {
     #[inline]
     fn clone(&self) -> Event {
-        unsafe { Event(CGEventCreateCopy(self.0)) }
-    }
-}
-
-impl Drop for Event {
-    #[inline]
-    fn drop(&mut self) {
-        unsafe { CFRelease(self.0) };
+        unsafe { Event(CGEventCreateCopy((self.0).0)) }
     }
 }
 
@@ -117,19 +132,19 @@ impl Event {
     /// Posts `self` to the Quartz event stream at the event location.
     #[inline]
     pub fn post(&self, location: EventLocation) {
-        unsafe { CGEventPost(location as raw::c_int, self.0) };
+        unsafe { CGEventPost(location as raw::c_int, (self.0).0) };
     }
 
     /// Returns the flags of the inner Quartz event.
     #[inline]
     pub fn flags(&self) -> EventFlags {
-        unsafe { CGEventGetFlags(self.0) }
+        unsafe { CGEventGetFlags((self.0).0) }
     }
 
     /// Sets the flags of the inner Quartz event.
     #[inline]
     pub fn set_flags(&mut self, flags: EventFlags) {
-        unsafe { CGEventSetFlags(self.0, flags) };
+        unsafe { CGEventSetFlags((self.0).0, flags) };
     }
 
     /// Sets the bits of `flags` in the flags of the inner Quartz event.

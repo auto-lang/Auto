@@ -1,11 +1,11 @@
 //! 🖱️ Mouse automation utilities.
 
-use std::{fmt, ptr};
+use std::{fmt, mem, ptr};
 use std::os::raw;
 
 use objc::runtime::Class;
 
-use super::{CGEvent, CGEventType, CGEventSource, CGPoint, NS_EVENT};
+use super::{CGEventType, CGEventSource, CGPoint, NonNull, NS_EVENT};
 
 extern {
     fn CGEventCreateMouseEvent(
@@ -15,11 +15,11 @@ extern {
         mouse_button: raw::c_int,
     ) -> *mut raw::c_void;
 
-    fn CGEventGetLocation(event: CGEvent) -> CGPoint;
+    fn CGEventGetLocation(event: NonNull) -> CGPoint;
 
-    fn CGEventGetUnflippedLocation(event: CGEvent) -> CGPoint;
+    fn CGEventGetUnflippedLocation(event: NonNull) -> CGPoint;
 
-    fn CGEventSetLocation(event: CGEvent, location: CGPoint);
+    fn CGEventSetLocation(event: NonNull, location: CGPoint);
 
     fn CGWarpMouseCursorPosition(new_cursor_position: CGPoint) -> CGPoint;
 }
@@ -73,31 +73,34 @@ impl Event {
     ///
     /// This function allocates a new `CGEvent`.
     pub fn new(button: Button, kind: EventKind, location: Location) -> Event {
-        unsafe { Event(super::Event(CGEventCreateMouseEvent(
-            ptr::null(),
-            (button, kind).into(),
-            location.into(),
-            button as raw::c_int,
-        ))) }
+        unsafe {
+            let event = CGEventCreateMouseEvent(
+                ptr::null(),
+                (button, kind).into(),
+                location.into(),
+                button as raw::c_int,
+            );
+            mem::transmute(event)
+        }
     }
 
     /// Returns the location of the inner Quartz mouse event.
     #[inline]
     pub fn location(&self) -> Location {
-        unsafe { CGEventGetLocation((self.0).0).into() }
+        unsafe { CGEventGetLocation(((self.0).0).0).into() }
     }
 
     /// Returns the location of the inner Quartz mouse event relative to the
     /// lower-left corner of the main display.
     #[inline]
     pub fn location_unflipped(&self) -> Location {
-        unsafe { CGEventGetUnflippedLocation((self.0).0).into() }
+        unsafe { CGEventGetUnflippedLocation(((self.0).0).0).into() }
     }
 
     /// Sets the location of the inner Quartz mouse event.
     #[inline]
     pub fn set_location(&mut self, location: Location) {
-        unsafe { CGEventSetLocation((self.0).0, location.into()) }
+        unsafe { CGEventSetLocation(((self.0).0).0, location.into()) }
     }
 }
 
