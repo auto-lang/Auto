@@ -3,6 +3,17 @@
 //! This crate provides both high-level (any OS) and low level (per-OS)
 //! functionality. See [the `os` module](./os/index.html) for APIs specific to
 //! the current operating system.
+//!
+//! # Cross-Platform Compatibility
+//!
+//! Auto aims to work on macOS, Windows, and Linux. This project is open to
+//! adding more operating systems in the future.
+//!
+//! | Platform | Support |
+//! | :------- | :------ |
+//! | [Linux](https://docs.rs/auto/0.0.2/x86_64-unknown-linux-gnu/auto/) | **pending** |
+//! | [macOS](https://docs.rs/auto/0.0.2/x86_64-apple-darwin/auto/) | **yes** |
+//! | [Windows](https://docs.rs/auto/0.0.2/x86_64-pc-windows-msvc/auto/) | **pending** |
 
 #![cfg_attr(all(test, nightly), feature(test))]
 
