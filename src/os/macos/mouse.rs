@@ -46,6 +46,7 @@ impl Clone for Event {
 }
 
 impl Drop for Event {
+    #[inline]
     fn drop(&mut self) {
         unsafe { super::CFRelease(self.0) };
     }
