@@ -17,6 +17,8 @@ extern {
 
     fn CGEventGetLocation(event: CGEvent) -> CGPoint;
 
+    fn CGEventGetUnflippedLocation(event: CGEvent) -> CGPoint;
+
     fn CGEventSetLocation(event: CGEvent, location: CGPoint);
 
     fn CGWarpMouseCursorPosition(new_cursor_position: CGPoint) -> CGPoint;
@@ -83,6 +85,13 @@ impl Event {
     #[inline]
     pub fn location(&self) -> Location {
         unsafe { CGEventGetLocation((self.0).0).into() }
+    }
+
+    /// Returns the location of the inner Quartz mouse event relative to the
+    /// lower-left corner of the main display.
+    #[inline]
+    pub fn location_unflipped(&self) -> Location {
+        unsafe { CGEventGetUnflippedLocation((self.0).0).into() }
     }
 
     /// Sets the location of the inner Quartz mouse event.
