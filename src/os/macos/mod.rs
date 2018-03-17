@@ -19,6 +19,7 @@ extern {
 #[macro_use]
 mod macros;
 
+pub mod keyboard;
 pub mod mouse;
 pub mod wheel;
 
