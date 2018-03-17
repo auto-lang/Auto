@@ -14,6 +14,10 @@ extern {
     fn CGEventPost(tap_location:raw::c_int, event: CGEvent);
 
     fn CGEventCreateCopy(event: CGEvent) -> CGEvent;
+
+    fn CGEventGetFlags(event: CGEvent) -> EventFlags;
+
+    fn CGEventSetFlags(event: CGEvent, flags: EventFlags);
 }
 
 #[macro_use]
@@ -113,6 +117,59 @@ impl Event {
     #[inline]
     pub fn post(&self, location: EventLocation) {
         unsafe { CGEventPost(location as raw::c_int, self.0) };
+    }
+
+    /// Returns the flags of the inner Quartz event.
+    #[inline]
+    pub fn flags(&self) -> EventFlags {
+        unsafe { CGEventGetFlags(self.0) }
+    }
+
+    /// Sets the flags of the inner Quartz event.
+    #[inline]
+    pub fn set_flags(&mut self, flags: EventFlags) {
+        unsafe { CGEventSetFlags(self.0, flags) };
+    }
+
+    /// Sets the bits of `flags` in the flags of the inner Quartz event.
+    // #[inline]
+    pub fn enable_flags(&mut self, flags: EventFlags) {
+        let prev = self.flags();
+        self.set_flags(prev | flags);
+    }
+}
+
+bitflags! {
+    /// Flags for indicating modifier key states, as well as other event-related
+    /// states.
+    #[repr(C)]
+    pub struct EventFlags: u64 {
+        /// Indicates that the Caps Lock key is down.
+        const ALPHA_SHIFT   = 0x10000;
+        /// Indicates that the Shift key is down.
+        const SHIFT         = 0x20000;
+        /// Indicates that the Control key is down.
+        const CONTROL       = 0x40000;
+        /// Indicates that the Alt or Option key is down.
+        const ALTERNATE     = 0x80000;
+        /// Indicates that the Command key is down.
+        const COMMAND       = 0x100000;
+
+        /// Indicates that the Help modifier key is down.
+        ///
+        /// This key is not present on most keyboards, and is different than the
+        /// Help key found in the same row as Home and Page Up.
+        const HELP          = 0x400000;
+        /// Indicates that the Fn (Function) key is down.
+        ///
+        /// This key is found primarily on laptop keyboards.
+        const SECONDARY_FN  = 0x800000;
+
+        /// Identifies key events from the numeric keypad area on extended
+        /// keyboards.
+        const NUMERIC_PAD   = 0x200000;
+        /// Indicates that mouse and pen movements are not being coalesced.
+        const NON_COALESCED = 0x100;
     }
 }
 

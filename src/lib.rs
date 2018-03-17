@@ -4,6 +4,9 @@
 extern crate test;
 
 #[macro_use]
+extern crate bitflags;
+
+#[macro_use]
 extern crate cfg_if;
 
 #[macro_use]
