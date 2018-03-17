@@ -1,6 +1,6 @@
 //! Mouse automation utilities.
 
-use std::{fmt, mem, ptr};
+use std::{fmt, ptr};
 use std::os::raw;
 
 use objc::runtime::Class;
@@ -21,6 +21,9 @@ extern {
 
     fn CGWarpMouseCursorPosition(new_cursor_position: CGPoint) -> CGPoint;
 }
+
+/// A location on the screen.
+pub type Location = (f64, f64);
 
 /// A button on the mouse.
 #[derive(Copy, Clone)]
@@ -56,7 +59,7 @@ impl Event {
     /// Creates a new mouse event for `button` of `kind` at `location`.
     ///
     /// This function allocates a new `CGEvent`.
-    pub fn new(button: Button, kind: EventKind, location: (f64, f64)) -> Event {
+    pub fn new(button: Button, kind: EventKind, location: Location) -> Event {
         use super::CGEventType::*;
 
         let event_type = match (button, kind) {
@@ -80,13 +83,13 @@ impl Event {
 
     /// Returns the location of the inner Quartz mouse event.
     #[inline]
-    pub fn location(&self) -> (f64, f64) {
+    pub fn location(&self) -> Location {
         unsafe { CGEventGetLocation(self.0).into() }
     }
 
     /// Sets the location of the inner Quartz mouse event.
     #[inline]
-    pub fn set_location(&mut self, location: (f64, f64)) {
+    pub fn set_location(&mut self, location: Location) {
         unsafe { CGEventSetLocation(self.0, location.into()) }
     }
 
@@ -115,18 +118,18 @@ pub enum EventKind {
 /// In macOS, values near 0 for x and y are located at the bottom, left-hand
 /// side of the screen.
 #[derive(Copy, Clone)]
-pub struct Location {
+pub struct LocationIter {
     ns_event: &'static Class
 }
 
-impl fmt::Debug for Location {
+impl fmt::Debug for LocationIter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.debug_struct("Location").finish()
     }
 }
 
-impl Iterator for Location {
-    type Item = (f64, f64);
+impl Iterator for LocationIter {
+    type Item = Location;
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
@@ -139,19 +142,19 @@ impl Iterator for Location {
     }
 }
 
-impl Location {
-    unsafe fn get_from(ns_event: &Class) -> (f64, f64) {
+impl LocationIter {
+    unsafe fn get_from(ns_event: &Class) -> Location {
         From::<CGPoint>::from(msg_send![ns_event, mouseLocation])
     }
 
     /// Returns the current mouse location.
-    pub fn get() -> (f64, f64) {
+    pub fn get() -> Location {
         unsafe { Self::get_from(&NS_EVENT) }
     }
 
     /// Returns an iterator over current mouse locations.
-    pub fn iter() -> Location {
-        Location { ns_event: &NS_EVENT }
+    pub fn iter() -> LocationIter {
+        LocationIter { ns_event: &NS_EVENT }
     }
 }
 
@@ -164,7 +167,7 @@ mod benches {
     fn location_get_100(b: &mut Bencher) {
         b.iter(|| {
             for _ in 0..100 {
-                black_box(Location::get());
+                black_box(LocationIter::get());
             }
         });
     }
@@ -172,7 +175,7 @@ mod benches {
     #[bench]
     fn location_iter_100(b: &mut Bencher) {
         b.iter(|| {
-            for loc in Location::iter().take(100) {
+            for loc in LocationIter::iter().take(100) {
                 black_box(loc);
             }
         })

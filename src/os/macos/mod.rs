@@ -2,7 +2,6 @@
 
 #![allow(non_snake_case)]
 
-use std::mem;
 use std::os::raw;
 
 use objc::runtime::Class;
