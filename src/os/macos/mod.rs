@@ -3,16 +3,16 @@
 #![allow(non_snake_case)]
 
 use std::mem;
-use std::os::raw::{c_int, c_void};
+use std::os::raw;
 
 use objc::runtime::Class;
 use objc::{Encode, Encoding};
 
 #[link(name = "Cocoa", kind = "framework")]
 extern {
-    fn CFRelease(_: *mut c_void);
+    fn CFRelease(_: *mut raw::c_void);
 
-    fn CGEventPost(tap_location: c_int, event: CGEvent);
+    fn CGEventPost(tap_location:raw::c_int, event: CGEvent);
 }
 
 pub mod mouse;
@@ -21,28 +21,36 @@ lazy_static! {
     static ref NS_EVENT: &'static Class = Class::get("NSEvent").unwrap();
 }
 
+cfg_if! {
+    if #[cfg(target_pointer_width = "64")] {
+        type CGFloat = raw::c_double;
+    } else {
+        type CGFloat = raw::c_float;
+    }
+}
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 struct CGPoint {
-    x: f64,
-    y: f64,
+    x: CGFloat,
+    y: CGFloat,
 }
 
 impl From<CGPoint> for (f64, f64) {
     #[inline]
     fn from(point: CGPoint) -> (f64, f64) {
-        unsafe { mem::transmute(point) }
+        (point.x as _, point.y as _)
     }
 }
 
 impl From<(f64, f64)> for CGPoint {
     #[inline]
-    fn from(tuple: (f64, f64)) -> CGPoint {
-        unsafe { mem::transmute(tuple) }
+    fn from((x, y): (f64, f64)) -> CGPoint {
+        CGPoint { x: x as _, y: y as _ }
     }
 }
 
-type CGEvent = *mut c_void;
+type CGEvent = *mut raw::c_void;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

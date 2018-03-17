@@ -1,7 +1,7 @@
 //! Mouse automation utilities.
 
 use std::{fmt, mem, ptr};
-use std::os::raw::{c_int, c_void};
+use std::os::raw;
 
 use objc::runtime::Class;
 
@@ -9,11 +9,11 @@ use super::{CGEvent, CGEventPost, CGEventType, CGPoint, NS_EVENT};
 
 extern {
     fn CGEventCreateMouseEvent(
-        source: *const c_void,
+        source: *const raw::c_void,
         mouse_type: CGEventType,
         mouse_cursor_position: CGPoint,
-        mouse_button: c_int,
-    ) -> *mut c_void;
+        mouse_button: raw::c_int,
+    ) -> *mut raw::c_void;
 
     fn CGEventGetLocation(event: CGEvent) -> CGPoint;
 
@@ -66,7 +66,7 @@ impl Event {
             ptr::null(),
             event_type,
             location.into(),
-            button as c_int,
+            button as raw::c_int,
         )) }
     }
 
@@ -85,7 +85,7 @@ impl Event {
     /// Posts `self` to the Quartz event stream at the event location.
     #[inline]
     pub fn post(&self, location: super::EventLocation) {
-        unsafe { CGEventPost(location as c_int, self.0) };
+        unsafe { CGEventPost(location as raw::c_int, self.0) };
     }
 }
 

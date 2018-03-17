@@ -9,6 +9,7 @@ description = "Cross-platform facilities designed for easy automation."
 include = ["Cargo.toml", "src/**/*.rs", "README.md", "CHANGELOG.md", "LICENSE*"]
 
 [dependencies]
+cfg-if = "0.1"
 lazy_static = "1.0"
 
 [target.'cfg(target_os = "macos")'.dependencies]
