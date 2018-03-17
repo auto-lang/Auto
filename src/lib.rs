@@ -2,7 +2,7 @@
 //!
 //! This crate provides both high-level (any OS) and low level (per-OS)
 //! functionality. See [the `os` module](./os/index.html) for APIs specific to
-//! a certain operating system.
+//! the current operating system.
 
 #![cfg_attr(all(test, nightly), feature(test))]
 
@@ -24,6 +24,16 @@ extern crate lazy_static;
 #[macro_use]
 extern crate objc;
 
+#[cfg(target_os = "linux")]
+#[path = "os/linux.rs"]
+pub mod os;
+
+#[cfg(target_os = "macos")]
+#[path = "os/macos/mod.rs"]
+pub mod os;
+
+#[cfg(target_os = "windows")]
+#[path = "os/windows.rs"]
 pub mod os;
 
 mod private {

@@ -1,4 +1,4 @@
-//! macOS-specific functionality.
+//! 🏎️ macOS-specific functionality.
 
 #![allow(non_snake_case)]
 

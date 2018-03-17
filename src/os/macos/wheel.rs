@@ -41,14 +41,12 @@ impl Event {
     /// Basic usage:
     ///
     /// ```
-    /// # #[cfg(target_os = "macos")] {
-    /// use auto::os::macos::{wheel, EventLocation};
+    /// use auto::os::{wheel, EventLocation};
     ///
     /// let unit  = wheel::ScrollUnit::Line;
     /// let event = wheel::Event::new(unit, [-5, 20]);
     /// # return;
     /// event.post(EventLocation::Session);
-    /// # }
     /// ```
     pub fn new<W: Wheels>(unit: ScrollUnit, wheels: W) -> Event {
         let slice = wheels.as_ref();
