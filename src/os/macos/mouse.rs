@@ -133,7 +133,7 @@ impl Iterator for LocationIter {
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        unsafe { Some(Self::get_from(self.ns_event)) }
+        unsafe { Some(location_from(self.ns_event)) }
     }
 
     #[inline]
@@ -142,20 +142,18 @@ impl Iterator for LocationIter {
     }
 }
 
-impl LocationIter {
-    unsafe fn get_from(ns_event: &Class) -> Location {
-        From::<CGPoint>::from(msg_send![ns_event, mouseLocation])
-    }
+unsafe fn location_from(ns_event: &Class) -> Location {
+    From::<CGPoint>::from(msg_send![ns_event, mouseLocation])
+}
 
-    /// Returns the current mouse location.
-    pub fn get() -> Location {
-        unsafe { Self::get_from(&NS_EVENT) }
-    }
+/// Returns the current mouse location.
+pub fn location() -> Location {
+    unsafe { location_from(&NS_EVENT) }
+}
 
-    /// Returns an iterator over current mouse locations.
-    pub fn iter() -> LocationIter {
-        LocationIter { ns_event: &NS_EVENT }
-    }
+/// Returns an iterator over current mouse locations.
+pub fn location_iter() -> LocationIter {
+    LocationIter { ns_event: &NS_EVENT }
 }
 
 #[cfg(all(test, nightly))]
