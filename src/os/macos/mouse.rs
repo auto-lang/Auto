@@ -48,26 +48,7 @@ pub enum Button {
     Right,
 }
 
-/// A mouse event that can be posted into the Quartz event stream.
-#[derive(Debug)]
-pub struct Event(CGEvent);
-
-unsafe impl Send for Event {}
-unsafe impl Sync for Event {}
-
-impl Clone for Event {
-    #[inline]
-    fn clone(&self) -> Event {
-        unsafe { Event(super::CGEventCreateCopy(self.0)) }
-    }
-}
-
-impl Drop for Event {
-    #[inline]
-    fn drop(&mut self) {
-        unsafe { super::CFRelease(self.0) };
-    }
-}
+declare_event!("A mouse event that can be posted into the Quartz event stream.");
 
 impl Event {
     /// Creates a new mouse event for `button` of `kind` at `location`.
@@ -87,30 +68,24 @@ impl Event {
             (Button::Right,  EventKind::Dragged) => RightMouseDragged,
         };
 
-        unsafe { Event(CGEventCreateMouseEvent(
+        unsafe { Event(super::Event(CGEventCreateMouseEvent(
             ptr::null(),
             event_type,
             location.into(),
             button as raw::c_int,
-        )) }
+        ))) }
     }
 
     /// Returns the location of the inner Quartz mouse event.
     #[inline]
     pub fn location(&self) -> Location {
-        unsafe { CGEventGetLocation(self.0).into() }
+        unsafe { CGEventGetLocation((self.0).0).into() }
     }
 
     /// Sets the location of the inner Quartz mouse event.
     #[inline]
     pub fn set_location(&mut self, location: Location) {
-        unsafe { CGEventSetLocation(self.0, location.into()) }
-    }
-
-    /// Posts `self` to the Quartz event stream at the event location.
-    #[inline]
-    pub fn post(&self, location: super::EventLocation) {
-        unsafe { super::CGEventPost(location as raw::c_int, self.0) };
+        unsafe { CGEventSetLocation((self.0).0, location.into()) }
     }
 }
 

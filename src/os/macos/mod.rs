@@ -16,6 +16,9 @@ extern {
     fn CGEventCreateCopy(event: CGEvent) -> CGEvent;
 }
 
+#[macro_use]
+mod macros;
+
 pub mod mouse;
 pub mod wheel;
 
@@ -79,6 +82,35 @@ unsafe impl Encode for CGPoint {
         let inner = f64::encode();
         let encoding = format!("{{CGPoint={0}{0}}}", inner.as_str());
         unsafe { Encoding::from_str(&encoding) }
+    }
+}
+
+/// An event that can be posted into the Quartz event stream.
+#[derive(Debug)]
+pub struct Event(CGEvent);
+
+unsafe impl Send for Event {}
+unsafe impl Sync for Event {}
+
+impl Clone for Event {
+    #[inline]
+    fn clone(&self) -> Event {
+        unsafe { Event(CGEventCreateCopy(self.0)) }
+    }
+}
+
+impl Drop for Event {
+    #[inline]
+    fn drop(&mut self) {
+        unsafe { CFRelease(self.0) };
+    }
+}
+
+impl Event {
+    /// Posts `self` to the Quartz event stream at the event location.
+    #[inline]
+    pub fn post(&self, location: EventLocation) {
+        unsafe { CGEventPost(location as raw::c_int, self.0) };
     }
 }
 
