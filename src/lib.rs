@@ -4,6 +4,22 @@
 //! functionality. See [the `os` module](./os/index.html) for APIs specific to
 //! the current operating system.
 //!
+//! # Usage
+//!
+//! This crate is available [on crates.io](https://crates.io/crates/auto) and
+//! can be used by adding the following to your project's `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! auto = "0.0.2"
+//! ```
+//!
+//! and this to your crate root:
+//!
+//! ```
+//! extern crate auto;
+//! ```
+//!
 //! # Cross-Platform Compatibility
 //!
 //! Auto aims to work on macOS, Windows, and Linux. This project is open to
@@ -14,6 +30,8 @@
 //! | [Linux](https://docs.rs/auto/0.0.2/x86_64-unknown-linux-gnu/auto/) | **pending** |
 //! | [macOS](https://docs.rs/auto/0.0.2/x86_64-apple-darwin/auto/) | **yes** |
 //! | [Windows](https://docs.rs/auto/0.0.2/x86_64-pc-windows-msvc/auto/) | **pending** |
+//!
+//! [crate]: https://crates.io/crates/auto
 
 #![cfg_attr(all(test, nightly), feature(test))]
 
