@@ -3,7 +3,7 @@
 use std::{fmt, mem, ptr};
 use std::os::raw;
 
-use objc::runtime::Class;
+use objc::runtime::{Class, Object};
 
 use super::{CGEventType, CGEventSource, CGPoint, NonNull, NS_EVENT};
 
@@ -13,7 +13,7 @@ extern {
         mouse_type: CGEventType,
         mouse_cursor_position: CGPoint,
         mouse_button: raw::c_int,
-    ) -> *mut raw::c_void;
+    ) -> *mut Object;
 
     fn CGEventGetLocation(event: NonNull) -> CGPoint;
 

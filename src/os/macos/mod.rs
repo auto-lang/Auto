@@ -7,7 +7,7 @@ use std::fmt;
 use std::os::raw;
 use std::ptr;
 
-use objc::runtime::Class;
+use objc::runtime::{Class, Object};
 use objc::{Encode, Encoding};
 
 #[link(name = "Cocoa", kind = "framework")]
@@ -35,7 +35,7 @@ lazy_static! {
     static ref NS_EVENT: &'static Class = Class::get("NSEvent").unwrap();
 }
 
-type NonNull = ptr::NonNull<raw::c_void>;
+type NonNull = ptr::NonNull<Object>;
 
 #[repr(C)]
 struct CFObject(NonNull);
@@ -73,7 +73,7 @@ struct CGPoint {
 }
 
 type CGEvent = CFObject;
-type CGEventSource = *const raw::c_void;
+type CGEventSource = *const Object;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
