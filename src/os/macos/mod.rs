@@ -51,6 +51,7 @@ type CGEventSource = *const raw::c_void;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
+#[allow(dead_code)]
 enum CGEventType {
     // The null event.
     Null,
