@@ -17,6 +17,7 @@ extern {
 }
 
 pub mod mouse;
+pub mod wheel;
 
 lazy_static! {
     static ref NS_EVENT: &'static Class = Class::get("NSEvent").unwrap();
