@@ -5,7 +5,7 @@ authors = ["Nikolai Vazquez"]
 license = "MIT/Apache-2.0"
 documentation = "https://docs.rs/auto/"
 keywords = ["cross-platform", "automation"]
-description = "Cross-platform facilities designed for easy automation."
+description = "Cross-platform input event automation facilities."
 include = ["Cargo.toml", "src/**/*.rs", "README.md", "CHANGELOG.md", "LICENSE*"]
 
 [dependencies]
