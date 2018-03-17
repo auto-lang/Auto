@@ -1,4 +1,4 @@
-//! Keyboard automation utilities.
+//! ⌨️ Keyboard automation utilities.
 
 use std::ptr;
 

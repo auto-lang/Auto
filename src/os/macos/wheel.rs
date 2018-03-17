@@ -1,4 +1,4 @@
-//! Scroll wheel automation utilities.
+//! 🎡 Scroll wheel automation utilities.
 
 use std::os::raw;
 use std::ptr;

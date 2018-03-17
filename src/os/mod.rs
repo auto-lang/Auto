@@ -1,4 +1,4 @@
-//! Functionality for each individual operating system.
+//! 🏎️ Functionality for each individual operating system.
 
 #[cfg(target_os = "linux")]
 pub mod linux;

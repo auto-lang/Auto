@@ -1,4 +1,4 @@
-//! Mouse automation utilities.
+//! 🖱️ Mouse automation utilities.
 
 use std::{fmt, ptr};
 use std::os::raw;
