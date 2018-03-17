@@ -46,6 +46,7 @@ impl Event {
     ///
     /// let unit  = wheel::ScrollUnit::Line;
     /// let event = wheel::Event::new(unit, [-5, 20]);
+    /// # return;
     /// event.post(EventLocation::Session);
     /// # }
     /// ```
