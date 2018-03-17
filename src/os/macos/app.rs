@@ -1,7 +1,7 @@
 //! 🍎 Application-specific utilities.
 
 use libc::pid_t;
-use objc::runtime::Class;
+use objc::runtime::{Class, Object};
 
 lazy_static! {
     static ref NS_RUNNING_APPLICATION: &'static Class = {
@@ -26,10 +26,19 @@ impl From<pid_t> for Pid {
 pub struct App(super::CFObject);
 
 impl App {
+    fn object(&self) -> &Object {
+        unsafe { (self.0).0.as_ref() }
+    }
+
     /// Returns the running application with the given process identifier, or
     /// `None` if no application has that pid.
     pub fn from_pid(pid: Pid) -> Option<App> {
         let cls: &Class = &NS_RUNNING_APPLICATION;
         unsafe { msg_send![cls, runningApplicationWithProcessIdentifier:pid] }
+    }
+
+    /// Indicates whether the application is currently hidden.
+    pub fn is_hidden(&self) -> bool {
+        unsafe { msg_send![self.object(), isHidden] }
     }
 }
