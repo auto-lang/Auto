@@ -132,7 +132,7 @@ impl Event {
     }
 
     /// Sets the bits of `flags` in the flags of the inner Quartz event.
-    // #[inline]
+    #[inline]
     pub fn enable_flags(&mut self, flags: EventFlags) {
         let prev = self.flags();
         self.set_flags(prev | flags);
