@@ -41,4 +41,9 @@ impl App {
     pub fn is_hidden(&self) -> bool {
         unsafe { msg_send![self.object(), isHidden] }
     }
+
+    /// Indicates whether the application is currently frontmost.
+    pub fn is_active(&self) -> bool {
+        unsafe { msg_send![self.object(), isActive] }
+    }
 }
