@@ -34,6 +34,20 @@ impl Event {
     /// statically ensures an input within the valid range.
     ///
     /// This function allocates a new `CGEvent`.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # #[cfg(target_os = "macos")] {
+    /// use auto::os::macos::{wheel, EventLocation};
+    ///
+    /// let unit  = wheel::ScrollUnit::Line;
+    /// let event = wheel::Event::new(unit, [-5, 20]);
+    /// event.post(EventLocation::Session);
+    /// # }
+    /// ```
     pub fn new<W: Wheels>(unit: ScrollUnit, wheels: W) -> Event {
         use super::CGEventType::*;
 
