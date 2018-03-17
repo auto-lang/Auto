@@ -25,6 +25,20 @@ extern {
 /// A location on the screen.
 pub type Location = (f64, f64);
 
+impl From<CGPoint> for Location {
+    #[inline]
+    fn from(point: CGPoint) -> Location {
+        (point.x as _, point.y as _)
+    }
+}
+
+impl From<Location> for CGPoint {
+    #[inline]
+    fn from((x, y): Location) -> CGPoint {
+        CGPoint { x: x as _, y: y as _ }
+    }
+}
+
 /// A button on the mouse.
 #[derive(Copy, Clone)]
 pub enum Button {

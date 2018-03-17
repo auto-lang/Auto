@@ -37,20 +37,6 @@ struct CGPoint {
     y: CGFloat,
 }
 
-impl From<CGPoint> for (f64, f64) {
-    #[inline]
-    fn from(point: CGPoint) -> (f64, f64) {
-        (point.x as _, point.y as _)
-    }
-}
-
-impl From<(f64, f64)> for CGPoint {
-    #[inline]
-    fn from((x, y): (f64, f64)) -> CGPoint {
-        CGPoint { x: x as _, y: y as _ }
-    }
-}
-
 type CGEvent = *mut raw::c_void;
 
 #[repr(C)]
