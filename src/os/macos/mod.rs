@@ -4,7 +4,7 @@
 #![allow(non_snake_case)]
 
 use std::fmt;
-use std::ffi::{CString, CStr};
+use std::ffi::CStr;
 use std::os::raw;
 use std::ptr;
 
@@ -36,9 +36,10 @@ lazy_static! {
     static ref NS_EVENT: &'static Class = Class::get("NSEvent").unwrap();
 }
 
-unsafe fn ns_string_encode_utf8(ns_string: *const Object) -> Option<CString> {
+unsafe fn ns_string_encode_utf8(ns_string: *const Object) -> Option<String> {
     if let Some(s) = ns_string.as_ref() {
-        Some(CStr::from_ptr(msg_send![s, UTF8String]).into())
+        let s = CStr::from_ptr(msg_send![s, UTF8String]);
+        Some(s.to_string_lossy().into())
     } else {
         None
     }

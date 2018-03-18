@@ -1,7 +1,5 @@
 //! 🍎 Application-specific utilities.
 
-use std::ffi::CString;
-
 use libc::pid_t;
 use objc::runtime::Class;
 
@@ -62,7 +60,7 @@ impl App {
 
     /// Returns the localized name of the application. The value is suitable for
     /// presentation to the user.
-    pub fn localized_name(&self) -> Option<CString> {
+    pub fn localized_name(&self) -> Option<String> {
         // TODO: check whether this method leaks memory
         unsafe {
             let s = msg_send![self.0.inner(), localizedName];
