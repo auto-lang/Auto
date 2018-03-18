@@ -160,6 +160,12 @@ pub fn location_iter() -> LocationIter {
     LocationIter { ns_event: &NS_EVENT }
 }
 
+/// Moves the mouse cursor without generating events.
+#[inline]
+pub fn warp_location(location: Location) {
+    unsafe { CGWarpMouseCursorPosition(location.into()) };
+}
+
 #[cfg(all(test, nightly))]
 mod benches {
     use super::*;
