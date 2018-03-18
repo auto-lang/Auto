@@ -3,9 +3,9 @@
 use std::ffi::CString;
 
 use libc::pid_t;
-use objc::runtime::{Class, Object};
+use objc::runtime::Class;
 
-use super::{CFObject, NonNull};
+use super::CFObject;
 
 lazy_static! {
     static ref NS_RUNNING_APPLICATION: &'static Class = {
@@ -37,6 +37,13 @@ impl App {
         unsafe { msg_send![cls, runningApplicationWithProcessIdentifier:pid] }
     }
 
+    /// Terminates invisibly running applications as if triggered by system
+    /// memory pressure.
+    pub fn terminate_auto_terminable_apps() {
+        let cls: &Class = &NS_RUNNING_APPLICATION;
+        unsafe { msg_send![cls, terminateAutomaticallyTerminableApplications] }
+    }
+
     /// Returns whether the application is currently hidden.
     pub fn is_hidden(&self) -> bool {
         unsafe { msg_send![self.0.inner(), isHidden] }
@@ -61,6 +68,23 @@ impl App {
             let s = msg_send![self.0.inner(), localizedName];
             super::ns_string_encode_utf8(s)
         }
+    }
+
+    /// Returns whether the application has terminated.
+    pub fn is_terminated(&self) -> bool {
+        unsafe { msg_send![self.0.inner(), isTerminated] }
+    }
+
+    /// Attempts to quit the application normally, returning whether the request
+    /// is successful.
+    pub fn terminate(&self) -> bool {
+        unsafe { msg_send![self.0.inner(), terminate] }
+    }
+
+    /// Attempts to force the application to quit, returning whether the request
+    /// is successful.
+    pub fn force_terminate(&self) -> bool {
+        unsafe { msg_send![self.0.inner(), forceTerminate] }
     }
 }
 
