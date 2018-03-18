@@ -44,6 +44,17 @@ pub fn open_file<'a, 'b, S>(path: &'a str, app_name: S)
     unsafe { msg_send![workspace, openFile:file withApplication:app] }
 }
 
+/// Launches the specified app, returning `true` on success or if it was already
+/// running.
+///
+/// The appName parameter need not be specified with a full path and, in the
+/// case of an app wrapper, may be specified with or without the .app extension.
+pub fn launch(app: &str) -> bool {
+    let app = str_to_ns_string(app.into());
+    let workspace: &Object = &NS_WORKSPACE_SHARED;
+    unsafe { msg_send![workspace, launchApplication:app] }
+}
+
 /// A process identifier.
 #[repr(C)]
 #[derive(Copy, Clone, Debug)]
