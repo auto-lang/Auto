@@ -49,29 +49,31 @@ impl App {
 
     /// Attempts to activate the application using the specified options,
     /// returning whether or not it was successful.
-    ///
-    /// # Parameters
-    ///
-    /// - `all_windows`:
-    ///
-    ///   By default, activation brings only the main and key windows forward.
-    ///   With this option, all of the application's windows are brought
-    ///   forward.
-    ///
-    /// - `ignore_other_apps`:
-    ///
-    ///    By default, activation deactivates the calling app (assuming it was
-    ///    active), and then the new app is activated only if there is no
-    ///    currently active application. This prevents the new app from
-    ///    stealing focus from the user, if the app is slow to activate and the
-    ///    user has switched to a different app in the interim.
-    ///
-    ///    However, with this option, the application is activated regardless
-    ///    of the currently active app, potentially stealing focus from the
-    ///    user. You should **rarely pass this flag** because stealing key
-    ///    focus produces a very bad user experience.
-    pub fn activate(&self, all_windows: bool, ignore_other_apps: bool) -> bool {
-        let options = all_windows as usize | (ignore_other_apps as usize) << 1;
+    pub fn activate(&self, options: ActivationOptions) -> bool {
         unsafe { msg_send![self.object(), activateWithOptions:options] }
+    }
+}
+
+bitflags! {
+    /// Options to use when calling
+    /// [`App::activate`](struct.App.html#method.activate).
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ActivationOptions: usize {
+        /// By default, activation brings only the main and key windows forward.
+        /// With this option, all of the application's windows are brought
+        /// forward.
+        const ALL_WINDOWS = 1 << 0;
+        /// By default, activation deactivates the calling app (assuming it was
+        /// active), and then the new app is activated only if there is no
+        /// currently active application. This prevents the new app from
+        /// stealing focus from the user, if the app is slow to activate and the
+        /// user has switched to a different app in the interim.
+        ///
+        /// However, with this option, the application is activated regardless
+        /// of the currently active app, potentially stealing focus from the
+        /// user. You should **rarely pass this flag** because stealing key
+        /// focus produces a very bad user experience.
+        const IGNORING_OTHER_APPS  = 1 << 1;
     }
 }
