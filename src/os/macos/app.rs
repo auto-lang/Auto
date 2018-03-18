@@ -75,16 +75,15 @@ impl App {
         unsafe { msg_send![self.0.inner(), isTerminated] }
     }
 
-    /// Attempts to quit the application normally, returning whether the request
-    /// is successful.
-    pub fn terminate(&self) -> bool {
-        unsafe { msg_send![self.0.inner(), terminate] }
-    }
-
-    /// Attempts to force the application to quit, returning whether the request
-    /// is successful.
-    pub fn force_terminate(&self) -> bool {
-        unsafe { msg_send![self.0.inner(), forceTerminate] }
+    /// Attempts to quit the application either forcefully or normally,
+    /// returning whether the request is successful.
+    pub fn terminate(&self, force: bool) -> bool {
+        let app = self.0.inner();
+        if force {
+            unsafe { msg_send![app, forceTerminate] }
+        } else {
+            unsafe { msg_send![app, terminate] }
+        }
     }
 }
 
