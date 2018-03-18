@@ -1,7 +1,9 @@
 //! 🍎 Application-specific utilities.
 
+use std::ffi::CString;
+
 use libc::pid_t;
-use objc::runtime::Class;
+use objc::runtime::{Class, Object};
 
 use super::CFObject;
 
@@ -9,6 +11,37 @@ lazy_static! {
     static ref NS_RUNNING_APPLICATION: &'static Class = {
         Class::get("NSRunningApplication").unwrap()
     };
+
+    static ref NS_STRING: &'static Class = {
+        Class::get("NSString").unwrap()
+    };
+
+    static ref NS_WORKSPACE_SHARED: &'static Object = {
+        let cls = Class::get("NSWorkspace").unwrap();
+        unsafe { msg_send![cls, sharedWorkspace] }
+    };
+}
+
+fn str_to_ns_string(s: String) -> CFObject {
+    let ns_string: &Class = &NS_STRING;
+    let s = CString::new(s).unwrap();
+    let utf8 = s.as_ptr();
+    unsafe { msg_send![ns_string, stringWithUTF8String:utf8] }
+}
+
+/// Opens a file using the specified app.
+///
+/// The `appName` parameter need not be specified with a full path and, in the
+/// case of an app wrapper, may be specified with or without the .app extension.
+/// The sending app is deactivated before the request is sent.
+pub fn open_file<'a, 'b, S>(path: &'a str, app_name: S)
+    where S: Into<Option<&'b str>>
+{
+    let file = str_to_ns_string(path.into());
+    let app  = app_name.into().map(|s| str_to_ns_string(s.into()));
+
+    let workspace: &Object = &NS_WORKSPACE_SHARED;
+    unsafe { msg_send![workspace, openFile:file withApplication:app] }
 }
 
 /// A process identifier.
