@@ -4,6 +4,7 @@
 #![allow(non_snake_case)]
 
 use std::fmt;
+use std::ffi::{CString, CStr};
 use std::os::raw;
 use std::ptr;
 
@@ -35,6 +36,14 @@ lazy_static! {
     static ref NS_EVENT: &'static Class = Class::get("NSEvent").unwrap();
 }
 
+unsafe fn ns_string_encode_utf8(ns_string: *const Object) -> Option<CString> {
+    if let Some(s) = ns_string.as_ref() {
+        Some(CStr::from_ptr(msg_send![s, UTF8String]).into())
+    } else {
+        None
+    }
+}
+
 type NonNull = ptr::NonNull<Object>;
 
 #[repr(C)]
@@ -56,6 +65,12 @@ impl fmt::Debug for CFObject {
 
 unsafe impl Send for CFObject {}
 unsafe impl Sync for CFObject {}
+
+impl CFObject {
+    fn inner(&self) -> &Object {
+        unsafe { self.0.as_ref() }
+    }
+}
 
 cfg_if! {
     if #[cfg(target_pointer_width = "64")] {

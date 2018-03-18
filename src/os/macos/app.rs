@@ -1,7 +1,11 @@
 //! 🍎 Application-specific utilities.
 
+use std::ffi::CString;
+
 use libc::pid_t;
 use objc::runtime::{Class, Object};
+
+use super::{CFObject, NonNull};
 
 lazy_static! {
     static ref NS_RUNNING_APPLICATION: &'static Class = {
@@ -23,13 +27,9 @@ impl From<pid_t> for Pid {
 
 /// A running application.
 #[derive(Debug)]
-pub struct App(super::CFObject);
+pub struct App(CFObject);
 
 impl App {
-    fn object(&self) -> &Object {
-        unsafe { (self.0).0.as_ref() }
-    }
-
     /// Returns the running application with the given process identifier, or
     /// `None` if no application has that pid.
     pub fn from_pid(pid: Pid) -> Option<App> {
@@ -37,20 +37,30 @@ impl App {
         unsafe { msg_send![cls, runningApplicationWithProcessIdentifier:pid] }
     }
 
-    /// Indicates whether the application is currently hidden.
+    /// Returns whether the application is currently hidden.
     pub fn is_hidden(&self) -> bool {
-        unsafe { msg_send![self.object(), isHidden] }
+        unsafe { msg_send![self.0.inner(), isHidden] }
     }
 
-    /// Indicates whether the application is currently frontmost.
+    /// Returns whether the application is currently frontmost.
     pub fn is_active(&self) -> bool {
-        unsafe { msg_send![self.object(), isActive] }
+        unsafe { msg_send![self.0.inner(), isActive] }
     }
 
     /// Attempts to activate the application using the specified options,
     /// returning whether or not it was successful.
     pub fn activate(&self, options: ActivationOptions) -> bool {
-        unsafe { msg_send![self.object(), activateWithOptions:options] }
+        unsafe { msg_send![self.0.inner(), activateWithOptions:options] }
+    }
+
+    /// Returns the localized name of the application. The value is suitable for
+    /// presentation to the user.
+    pub fn localized_name(&self) -> Option<CString> {
+        // TODO: check whether this method leaks memory
+        unsafe {
+            let s = msg_send![self.0.inner(), localizedName];
+            super::ns_string_encode_utf8(s)
+        }
     }
 }
 
