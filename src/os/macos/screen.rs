@@ -1,5 +1,7 @@
 //! 📺 Screen information utilities.
 
+use libc::size_t;
+
 use super::{CGRect, CGSize};
 
 extern {
@@ -20,6 +22,10 @@ extern {
     fn CGDisplayScreenSize(display: Display) -> CGSize;
 
     fn CGDisplayBounds(display: Display) -> CGRect;
+
+    fn CGDisplayPixelsHigh(display: Display) -> size_t;
+
+    fn CGDisplayPixelsWide(display: Display) -> size_t;
 }
 
 type CGError = i32;
@@ -117,5 +123,14 @@ impl Display {
     #[inline]
     pub fn bounds(self) -> Bounds {
         unsafe { CGDisplayBounds(self).into() }
+    }
+
+    /// Returns the width and height in pixel units.
+    #[inline]
+    pub fn pixels(self) -> (usize, usize) {
+        unsafe { (
+            CGDisplayPixelsWide(self) as usize,
+            CGDisplayPixelsHigh(self) as usize,
+        ) }
     }
 }
