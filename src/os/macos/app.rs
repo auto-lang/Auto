@@ -109,7 +109,6 @@ impl App {
     /// Returns the localized name of the application. The value is suitable for
     /// presentation to the user.
     pub fn localized_name(&self) -> Option<String> {
-        // TODO: check whether this method leaks memory
         unsafe {
             let s = msg_send![self.0.inner(), localizedName];
             super::ns_string_encode_utf8(s)
