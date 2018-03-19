@@ -103,6 +103,18 @@ impl App {
         unsafe { msg_send![self.0.inner(), isHidden] }
     }
 
+    /// Attempts to hide or unhide the application, returning whether the
+    /// operation is successful. Returns `false` if the app has already quit, or
+    /// if it is a type that is unable to be hidden.
+    pub fn set_hidden(&self, hide: bool) -> bool {
+        let app = self.0.inner();
+        if hide {
+            unsafe { msg_send![app, hide] }
+        } else {
+            unsafe { msg_send![app, unhide] }
+        }
+    }
+
     /// Returns whether the application is currently frontmost.
     pub fn is_active(&self) -> bool {
         unsafe { msg_send![self.0.inner(), isActive] }
