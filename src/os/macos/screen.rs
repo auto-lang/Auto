@@ -68,8 +68,8 @@ impl From<CGRect> for Bounds {
     #[inline]
     fn from(rect: CGRect) -> Bounds {
         Bounds {
-            origin: (rect.origin.x, rect.origin.y),
-            size: (rect.size.width, rect.size.height),
+            origin: (rect.origin.x as _, rect.origin.y as _),
+            size: (rect.size.width as _, rect.size.height as _),
         }
     }
 }
