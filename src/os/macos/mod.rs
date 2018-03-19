@@ -88,6 +88,10 @@ impl_object!(NSObject, NSObjectRef, fn drop(&mut self) {
 });
 
 impl NSObject {
+    fn alloc(cls: &Class) -> NSObject {
+        unsafe { msg_send![cls, alloc] }
+    }
+
     fn inner(&self) -> &Object {
         unsafe { self.0.as_ref() }
     }
@@ -120,6 +124,12 @@ struct CGSize {
 struct CGRect {
     origin: CGPoint,
     size:   CGSize,
+}
+
+impl CGRect {
+    fn new(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) -> CGRect {
+        CGRect { origin: CGPoint { x, y }, size: CGSize { width, height } }
+    }
 }
 
 type CGEvent = CFObject;

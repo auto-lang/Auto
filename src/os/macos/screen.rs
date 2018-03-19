@@ -1,8 +1,13 @@
 //! 📺 Screen information utilities.
 
-use libc::size_t;
+use std::os::raw;
+use std::ptr;
 
-use super::{CGRect, CGSize};
+use libc::size_t;
+use objc::runtime::Class;
+
+use super::{CGFloat, CGRect, CGSize, NSObject, NSObjectRef};
+use color::Rgb;
 
 extern {
     fn CGMainDisplayID() -> Display;
@@ -26,11 +31,29 @@ extern {
     fn CGDisplayPixelsHigh(display: Display) -> size_t;
 
     fn CGDisplayPixelsWide(display: Display) -> size_t;
+
+    fn CGDisplayCreateImageForRect(display: Display, rect: CGRect) -> Option<CGImage>;
+
+    fn CGImageRelease(image: CGImageRef);
+}
+
+lazy_static! {
+    static ref NS_BITMAP: &'static Class = Class::get("NSBitmapImageRep").unwrap();
 }
 
 type CGError = i32;
 
 type CGDisplayListGetter = unsafe extern fn(u32, *mut Display, *mut u32) -> CGError;
+
+type CGImageRef = ptr::NonNull<raw::c_void>;
+
+struct CGImage(CGImageRef);
+
+impl Drop for CGImage {
+    fn drop(&mut self) {
+        unsafe { CGImageRelease(self.0) };
+    }
+}
 
 /// The location and dimensions of a display.
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -111,6 +134,27 @@ impl Display {
         displays_with(CGGetActiveDisplayList)
     }
 
+    /// Returns the color at the location relative to the origin of the display.
+    pub fn color_at(self, (x, y): (f64, f64)) -> Option<Rgb> {
+        let rect  = CGRect::new(x as _, y as _, 1.0, 1.0);
+        let image = unsafe { CGDisplayCreateImageForRect(self, rect) }?;
+
+        let bitmap: NSObject = NSObject::alloc(&NS_BITMAP);
+        let bitmap = bitmap.inner();
+
+        unsafe {
+            let _: NSObjectRef  = msg_send![bitmap, initWithCGImage:image];
+            let color: NSObject = msg_send![bitmap, colorAtX:0usize y:0usize];
+            let color = color.inner();
+
+            let r: CGFloat = msg_send![color, redComponent];
+            let g: CGFloat = msg_send![color, greenComponent];
+            let b: CGFloat = msg_send![color, blueComponent];
+
+            Some(Rgb { red: r as _, green: g as _, blue: b as _ })
+        }
+    }
+
     /// Returns the width and height of the display in millimeters, or 0 if the
     /// display is not valid.
     #[inline]
@@ -132,5 +176,20 @@ impl Display {
             CGDisplayPixelsWide(self) as usize,
             CGDisplayPixelsHigh(self) as usize,
         ) }
+    }
+}
+
+#[cfg(all(test, nightly))]
+mod benches {
+    use super::*;
+    use test::{Bencher, black_box};
+
+    #[bench]
+    fn color_at(b: &mut Bencher) {
+        let display = Display::main();
+        let loc = (0.0, 0.0);
+        b.iter(|| {
+            black_box(display.color_at(black_box(loc)));
+        });
     }
 }

@@ -56,6 +56,8 @@ extern crate libc;
 #[macro_use]
 extern crate objc;
 
+pub mod color;
+
 #[cfg(target_os = "linux")]
 #[path = "os/linux.rs"]
 pub mod os;
