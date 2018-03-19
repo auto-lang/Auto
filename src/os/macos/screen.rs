@@ -165,9 +165,17 @@ impl Display {
             let color: NSObject = msg_send![bitmap, colorAtX:0usize y:0usize];
             let color = color.inner();
 
-            let r: CGFloat = msg_send![color, redComponent];
-            let g: CGFloat = msg_send![color, greenComponent];
-            let b: CGFloat = msg_send![color, blueComponent];
+            let mut r: CGFloat = 0.0;
+            let mut g: CGFloat = 0.0;
+            let mut b: CGFloat = 0.0;
+
+            msg_send![
+                color,
+                getRed: (&mut r)
+                green:  (&mut g)
+                blue:   (&mut b)
+                alpha:  ptr::null_mut::<CGFloat>()
+            ];
 
             Some(Rgb { red: r as _, green: g as _, blue: b as _ })
         }
