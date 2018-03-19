@@ -1,5 +1,7 @@
 //! 📺 Screen information utilities.
 
+use super::CGSize;
+
 extern {
     fn CGMainDisplayID() -> Display;
 
@@ -14,6 +16,8 @@ extern {
         online_displays: *mut Display,
         displayCount: *mut u32
     ) -> CGError;
+
+    fn CGDisplayScreenSize(display: Display) -> CGSize;
 }
 
 type CGError = i32;
@@ -78,5 +82,13 @@ impl Display {
     /// in the list.
     pub fn active() -> Option<Vec<Display>> {
         displays_with(CGGetActiveDisplayList)
+    }
+
+    /// Returns the width and height of the display in millimeters, or 0 if the
+    /// display is not valid.
+    #[inline]
+    pub fn size(self) -> (f64, f64) {
+        let CGSize { width, height } = unsafe { CGDisplayScreenSize(self) };
+        (width as _, height as _)
     }
 }

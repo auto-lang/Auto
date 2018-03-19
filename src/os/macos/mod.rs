@@ -100,6 +100,13 @@ struct CGPoint {
     y: CGFloat,
 }
 
+#[repr(C)]
+#[derive(Copy, Clone)]
+struct CGSize {
+    width: CGFloat,
+    height: CGFloat,
+}
+
 type CGEvent = CFObject;
 type CGEventSource = *const Object;
 
