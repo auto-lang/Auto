@@ -78,7 +78,7 @@ pub type Pid = pid_t;
 pub struct App(NSObject);
 
 impl App {
-    /// Returns the
+    /// Returns the instance representing this application.
     pub fn current() -> &'static App {
         &CURRENT_APPLICATION
     }
