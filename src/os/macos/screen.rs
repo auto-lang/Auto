@@ -79,15 +79,18 @@ impl From<CGRect> for Bounds {
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq)]
 pub struct Display(u32);
 
-fn displays_with(get: CGDisplayListGetter) -> Option<Vec<Display>> {
+fn displays_with(get: CGDisplayListGetter) -> Vec<Display> {
     let mut count = 0u32;
-    if unsafe { get(0, 0 as _, &mut count) } == 0 {
-        let mut buffer = vec![Display(0); count as usize];
-        if unsafe { get(count, buffer.as_mut_ptr(), &mut count) } == 0 {
-            return Some(buffer);
-        }
+    if unsafe { get(0, 0 as _, &mut count) } != 0 {
+        return Vec::new();
     }
-    None
+
+    let mut buffer = vec![Display(0); count as usize];
+    if unsafe { get(count, buffer.as_mut_ptr(), &mut count) } != 0 {
+        buffer.clear();
+    }
+
+    buffer
 }
 
 impl Display {
@@ -116,7 +119,7 @@ impl Display {
     /// drawable. Programs that manipulate display settings (such as gamma tables)
     /// need access to all displays, including hardware mirrors, which are not
     /// drawable.
-    pub fn online() -> Option<Vec<Display>> {
+    pub fn online() -> Vec<Display> {
         displays_with(CGGetOnlineDisplayList)
     }
 
@@ -130,7 +133,7 @@ impl Display {
     /// the primary display is active and appears in the list. When software
     /// mirroring is being used, all the mirrored displays are active and appear
     /// in the list.
-    pub fn active() -> Option<Vec<Display>> {
+    pub fn active() -> Vec<Display> {
         displays_with(CGGetActiveDisplayList)
     }
 
