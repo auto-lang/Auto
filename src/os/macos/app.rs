@@ -20,6 +20,11 @@ lazy_static! {
         let cls = Class::get("NSWorkspace").unwrap();
         unsafe { msg_send![cls, sharedWorkspace] }
     };
+
+    static ref CURRENT_APPLICATION: App = {
+        let cls: &Class = &NS_RUNNING_APPLICATION;
+        unsafe { msg_send![cls, currentApplication] }
+    };
 }
 
 fn str_to_ns_string(s: String) -> CFObject {
@@ -73,6 +78,11 @@ pub type Pid = pid_t;
 pub struct App(CFObject);
 
 impl App {
+    /// Returns the
+    pub fn current() -> &'static App {
+        &CURRENT_APPLICATION
+    }
+
     /// Returns the running application with the given process identifier, or
     /// `None` if no application has that pid.
     pub fn from_pid(pid: Pid) -> Option<App> {
