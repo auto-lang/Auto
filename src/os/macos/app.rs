@@ -90,6 +90,14 @@ impl App {
         unsafe { msg_send![cls, runningApplicationWithProcessIdentifier:pid] }
     }
 
+    /// Returns the process identifier of the application.
+    pub fn pid(&self) -> Option<Pid> {
+        match unsafe { msg_send![self.0.inner(), processIdentifier] } {
+            -1 => None,
+            id => Some(id),
+        }
+    }
+
     /// Returns whether the application is currently hidden.
     pub fn is_hidden(&self) -> bool {
         unsafe { msg_send![self.0.inner(), isHidden] }
