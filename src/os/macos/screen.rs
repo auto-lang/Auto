@@ -205,6 +205,26 @@ impl Display {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn color_at() {
+        use std::f64;
+
+        let values  = [0.0, f64::NAN, f64::INFINITY];
+        let display = Display::main();
+
+        for &x in &values {
+            for &y in &values {
+                let color = display.color_at((x, y));
+                panic!("{:?}", color);
+            }
+        }
+    }
+}
+
 #[cfg(all(test, nightly))]
 mod benches {
     use super::*;
