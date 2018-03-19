@@ -90,6 +90,11 @@ impl App {
         unsafe { msg_send![cls, runningApplicationWithProcessIdentifier:pid] }
     }
 
+    /// Returns the executing processor architecture for the application.
+    pub fn arch(&self) -> Arch {
+        unsafe { msg_send![self.0.inner(), executableArchitecture] }
+    }
+
     /// Returns the process identifier of the application.
     pub fn pid(&self) -> Option<Pid> {
         match unsafe { msg_send![self.0.inner(), processIdentifier] } {
@@ -203,5 +208,33 @@ bitflags! {
         /// user. You should **rarely pass this flag** because stealing key
         /// focus produces a very bad user experience.
         const IGNORING_OTHER_APPS  = 1 << 1;
+    }
+}
+
+/// An application architecture.
+#[repr(usize)]
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq)]
+pub enum Arch {
+    /// The 32-bit Intel architecture.
+    I386 = 0x00000007,
+    /// The 32-bit PowerPC architecture.
+    Ppc = 0x00000012,
+    /// The 64-bit Intel architecture.
+    X86_64 = 0x01000007,
+    /// The 64-bit PowerPC architecture.
+    Ppc64 = 0x01000012,
+}
+
+impl Arch {
+    /// The architecture is 32-bit.
+    #[inline]
+    pub fn is_32bit(self) -> bool {
+        !self.is_64bit()
+    }
+
+    /// The architecture is 64-bit.
+    #[inline]
+    pub fn is_64bit(self) -> bool {
+        self as usize & 0x01000000 != 0
     }
 }
