@@ -114,6 +114,15 @@ impl App {
         unsafe { msg_send![self.0.inner(), activateWithOptions:options] }
     }
 
+    /// Returns the `CFBundleIdentifier` of the application, or `None` if the
+    /// application does not have an `Info.plist`.
+    pub fn bundle_identifier(&self) -> Option<String> {
+        unsafe {
+            let s = msg_send![self.0.inner(), bundleIdentifier];
+            super::ns_string_encode_utf8(s)
+        }
+    }
+
     /// Returns the localized name of the application. The value is suitable for
     /// presentation to the user.
     pub fn localized_name(&self) -> Option<String> {
