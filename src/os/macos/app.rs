@@ -5,7 +5,7 @@ use std::ffi::CString;
 use libc::pid_t;
 use objc::runtime::{Class, Object};
 
-use super::CFObject;
+use super::NSObject;
 
 lazy_static! {
     static ref NS_RUNNING_APPLICATION: &'static Class = {
@@ -27,7 +27,7 @@ lazy_static! {
     };
 }
 
-fn str_to_ns_string(s: String) -> CFObject {
+fn str_to_ns_string(s: String) -> NSObject {
     let ns_string: &Class = &NS_STRING;
     let s = CString::new(s).unwrap();
     let utf8 = s.as_ptr();
@@ -75,7 +75,7 @@ pub type Pid = pid_t;
 
 /// A running application.
 #[derive(Debug)]
-pub struct App(CFObject);
+pub struct App(NSObject);
 
 impl App {
     /// Returns the

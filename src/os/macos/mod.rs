@@ -36,9 +36,9 @@ lazy_static! {
     static ref NS_EVENT: &'static Class = Class::get("NSEvent").unwrap();
 }
 
-unsafe fn ns_string_encode_utf8(ns_string: *const Object) -> Option<String> {
-    if let Some(s) = ns_string.as_ref() {
-        let s = CStr::from_ptr(msg_send![s, UTF8String]);
+unsafe fn ns_string_encode_utf8(ns_string: Option<NSObject>) -> Option<String> {
+    if let Some(s) = ns_string {
+        let s = CStr::from_ptr(msg_send![s.inner(), UTF8String]);
         Some(s.to_string_lossy().into())
     } else {
         None
@@ -47,27 +47,38 @@ unsafe fn ns_string_encode_utf8(ns_string: *const Object) -> Option<String> {
 
 type NonNull = ptr::NonNull<Object>;
 
-#[repr(C)]
-struct CFObject(NonNull);
+macro_rules! impl_object {
+    ($obj:ident, $($drop:tt)+) => {
+        #[repr(C)]
+        struct $obj(NonNull);
 
-impl Drop for CFObject {
-    #[inline]
-    fn drop(&mut self) {
-        unsafe { CFRelease(self.0) }
+        impl Drop for $obj {
+            #[inline]
+            $($drop)+
+        }
+
+        impl fmt::Debug for $obj {
+            #[inline]
+            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                self.0.fmt(f)
+            }
+        }
+
+        unsafe impl Send for $obj {}
+        unsafe impl Sync for $obj {}
     }
 }
 
-impl fmt::Debug for CFObject {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.0.fmt(f)
-    }
-}
+impl_object!(CFObject, fn drop(&mut self) {
+    unsafe { CFRelease(self.0) };
+});
 
-unsafe impl Send for CFObject {}
-unsafe impl Sync for CFObject {}
+impl_object!(NSObject, fn drop(&mut self) {
+    let ptr = self.0.as_ptr();
+    unsafe { msg_send![ptr, release] };
+});
 
-impl CFObject {
+impl NSObject {
     fn inner(&self) -> &Object {
         unsafe { self.0.as_ref() }
     }
