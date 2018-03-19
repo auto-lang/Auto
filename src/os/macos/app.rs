@@ -175,6 +175,11 @@ impl App {
             unsafe { msg_send![app, terminate] }
         }
     }
+
+    /// Returns whether the application owns the current menu bar.
+    pub fn owns_menu_bar(&self) -> bool {
+        unsafe { msg_send![self.0.inner(), ownsMenuBar] }
+    }
 }
 
 bitflags! {
