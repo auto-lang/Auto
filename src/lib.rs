@@ -11,7 +11,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! auto = "0.0.3"
+//! auto = "0.0.4"
 //! ```
 //!
 //! and this to your crate root:
@@ -27,9 +27,9 @@
 //!
 //! | Platform | Support |
 //! | :------- | :------ |
-//! | [Linux](https://docs.rs/auto/0.0.3/x86_64-unknown-linux-gnu/auto/os/) | **pending** |
-//! | [macOS](https://docs.rs/auto/0.0.3/x86_64-apple-darwin/auto/os/) | **yes** |
-//! | [Windows](https://docs.rs/auto/0.0.3/x86_64-pc-windows-msvc/auto/os/) | **pending** |
+//! | [Linux](https://docs.rs/auto/0.0.4/x86_64-unknown-linux-gnu/auto/os/) | **pending** |
+//! | [macOS](https://docs.rs/auto/0.0.4/x86_64-apple-darwin/auto/os/) | **yes** |
+//! | [Windows](https://docs.rs/auto/0.0.4/x86_64-pc-windows-msvc/auto/os/) | **pending** |
 //!
 //! [crate]: https://crates.io/crates/auto
 
