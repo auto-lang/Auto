@@ -8,9 +8,17 @@ extern {
         online_displays: *mut DisplayId,
         displayCount: *mut u32
     ) -> CGError;
+
+    fn CGGetActiveDisplayList(
+        max_displays: u32,
+        online_displays: *mut DisplayId,
+        displayCount: *mut u32
+    ) -> CGError;
 }
 
 type CGError = i32;
+
+type CGDisplayListGetter = unsafe extern fn(u32, *mut DisplayId, *mut u32) -> CGError;
 
 /// Returns the ID of the main display.
 ///
@@ -29,6 +37,17 @@ pub fn main_display() -> DisplayId {
     unsafe { CGMainDisplayID() }
 }
 
+fn displays_with(get: CGDisplayListGetter) -> Option<Vec<DisplayId>> {
+    let mut count = 0u32;
+    if unsafe { get(0, 0 as _, &mut count) } == 0 {
+        let mut buffer = vec![0; count as usize];
+        if unsafe { get(count, buffer.as_mut_ptr(), &mut count) } == 0 {
+            return Some(buffer);
+        }
+    }
+    None
+}
+
 /// Returns IDs for displays that are online (active, mirrored, or sleeping).
 ///
 /// If the framebuffer hardware is connected, a display is considered connected
@@ -38,23 +57,21 @@ pub fn main_display() -> DisplayId {
 /// drawable. Programs that manipulate display settings (such as gamma tables)
 /// need access to all displays, including hardware mirrors, which are not
 /// drawable.
-#[inline]
 pub fn online_displays() -> Option<Vec<DisplayId>> {
-    macro_rules! handle {
-        ($e:expr) => { match $e {
-            0 => (),
-            _ => return None,
-        } }
-    }
+    displays_with(CGGetOnlineDisplayList)
+}
 
-    let mut count = 0u32;
-    handle!(unsafe { CGGetOnlineDisplayList(0, 0 as _, &mut count) });
-
-    let mut buffer = vec![0; count as usize];
-    let ptr = buffer.as_mut_ptr();
-    handle!(unsafe { CGGetOnlineDisplayList(count, ptr, &mut count) });
-
-    Some(buffer)
+/// Returns IDs for displays that are active (or drawable).
+///
+/// The first entry is the main display. In case of mirroring, the first entry
+/// is the largest drawable display or, if all are the same size, the display
+/// with the greatest pixel depth.
+///
+/// Note that when hardware mirroring is being used between displays, only the
+/// primary display is active and appears in the list. When software mirroring
+/// is being used, all the mirrored displays are active and appear in the list.
+pub fn active_displays() -> Option<Vec<DisplayId>> {
+    displays_with(CGGetActiveDisplayList)
 }
 
 /// A unique identifier for an attached display.
