@@ -51,6 +51,7 @@ type NonNull = ptr::NonNull<Object>;
 macro_rules! impl_object {
     ($obj:ident, $($drop:tt)+) => {
         #[repr(C)]
+        #[derive(PartialEq, Eq, Hash)]
         struct $obj(NonNull);
 
         impl Drop for $obj {
@@ -161,7 +162,7 @@ unsafe impl Encode for CGPoint {
 }
 
 /// An event that can be posted into the Quartz event stream.
-#[derive(Debug)]
+#[derive(Debug, Hash, PartialEq, Eq)]
 pub struct Event(CGEvent);
 
 impl Clone for Event {
@@ -233,7 +234,7 @@ bitflags! {
 }
 
 /// An event location.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq)]
 pub enum EventLocation {
     /// The event is placed at the point where HID system events enter the
     /// window server.

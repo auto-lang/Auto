@@ -42,7 +42,7 @@ impl From<Location> for CGPoint {
 }
 
 /// A button on the mouse.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq)]
 pub enum Button {
     /// Left button where the index finger would press.
     Left,
@@ -105,7 +105,7 @@ impl Event {
 }
 
 /// The kind of operation being performed by the mouse event.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq)]
 pub enum EventKind {
     /// Mouse pressed down.
     Down,

@@ -1,7 +1,8 @@
 macro_rules! declare_event {
     ($doc:expr) => {
         #[doc = $doc]
-        #[derive(Clone)]
+        #[derive(Clone, Hash, PartialEq, Eq)]
+
         pub struct Event(super::Event);
 
         impl From<Event> for super::Event {

@@ -27,7 +27,7 @@ type CGError = i32;
 type CGDisplayListGetter = unsafe extern fn(u32, *mut Display, *mut u32) -> CGError;
 
 /// The location and dimensions of a display.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Bounds {
     /// Coordinates of the origin.
     pub origin: (f64, f64),
@@ -47,7 +47,7 @@ impl From<CGRect> for Bounds {
 
 /// A monitor display.
 #[repr(C)]
-#[derive(Copy, Clone, Debug, Hash)]
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq)]
 pub struct Display(u32);
 
 fn displays_with(get: CGDisplayListGetter) -> Option<Vec<Display>> {

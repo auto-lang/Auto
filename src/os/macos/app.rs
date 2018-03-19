@@ -74,7 +74,7 @@ pub fn auto_terminate() {
 pub type Pid = pid_t;
 
 /// A running application.
-#[derive(Debug)]
+#[derive(Debug, Hash, PartialEq, Eq)]
 pub struct App(NSObject);
 
 impl App {
