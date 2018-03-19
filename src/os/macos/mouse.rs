@@ -24,6 +24,26 @@ extern {
     fn CGWarpMouseCursorPosition(new_cursor_position: CGPoint) -> CGPoint;
 }
 
+unsafe fn location_from(ns_event: &Class) -> Location {
+    From::<CGPoint>::from(msg_send![ns_event, mouseLocation])
+}
+
+/// Returns the current mouse location.
+pub fn location() -> Location {
+    unsafe { location_from(&NS_EVENT) }
+}
+
+/// Returns an iterator over current mouse locations.
+pub fn location_iter() -> LocationIter {
+    LocationIter { ns_event: &NS_EVENT }
+}
+
+/// Moves the mouse cursor without generating events.
+#[inline]
+pub fn warp_location(location: Location) {
+    unsafe { CGWarpMouseCursorPosition(location.into()) };
+}
+
 /// A location on the screen.
 pub type Location = (f64, f64);
 
@@ -144,26 +164,6 @@ impl Iterator for LocationIter {
     fn size_hint(&self) -> (usize, Option<usize>) {
         (usize::max_value(), None)
     }
-}
-
-unsafe fn location_from(ns_event: &Class) -> Location {
-    From::<CGPoint>::from(msg_send![ns_event, mouseLocation])
-}
-
-/// Returns the current mouse location.
-pub fn location() -> Location {
-    unsafe { location_from(&NS_EVENT) }
-}
-
-/// Returns an iterator over current mouse locations.
-pub fn location_iter() -> LocationIter {
-    LocationIter { ns_event: &NS_EVENT }
-}
-
-/// Moves the mouse cursor without generating events.
-#[inline]
-pub fn warp_location(location: Location) {
-    unsafe { CGWarpMouseCursorPosition(location.into()) };
 }
 
 #[cfg(all(test, nightly))]
