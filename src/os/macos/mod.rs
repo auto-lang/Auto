@@ -37,6 +37,12 @@ lazy_static! {
     static ref NS_EVENT: &'static Class = Class::get("NSEvent").unwrap();
 }
 
+unsafe fn ns_url_encode_utf8(ns_url: Option<NSObject>) -> Option<String> {
+    ns_url.and_then(|url| {
+        ns_string_encode_utf8(msg_send![url.inner(), absoluteString])
+    })
+}
+
 unsafe fn ns_string_encode_utf8(ns_string: Option<NSObject>) -> Option<String> {
     if let Some(s) = ns_string {
         let s = CStr::from_ptr(msg_send![s.inner(), UTF8String]);

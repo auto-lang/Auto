@@ -135,6 +135,22 @@ impl App {
         }
     }
 
+    /// Returns the URL to the application's bundle.
+    pub fn bundle_url(&self) -> Option<String> {
+        unsafe {
+            let url = msg_send![self.0.inner(), bundleURL];
+            super::ns_url_encode_utf8(url)
+        }
+    }
+
+    /// Returns the URL to the application's executable.
+    pub fn executable_url(&self) -> Option<String> {
+        unsafe {
+            let url = msg_send![self.0.inner(), executableURL];
+            super::ns_url_encode_utf8(url)
+        }
+    }
+
     /// Returns the localized name of the application. The value is suitable for
     /// presentation to the user.
     pub fn localized_name(&self) -> Option<String> {
