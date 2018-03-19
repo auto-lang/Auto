@@ -55,6 +55,16 @@ pub fn launch(app: &str) -> bool {
     unsafe { msg_send![workspace, launchApplication:app] }
 }
 
+/// Terminates invisibly running, auto-terminable applications as if triggered
+/// by system memory pressure.
+///
+/// This method corresponds to
+/// `NSRunningApplication.terminateAutomaticallyTerminableApplications()`.
+pub fn auto_terminate() {
+    let cls: &Class = &NS_RUNNING_APPLICATION;
+    unsafe { msg_send![cls, terminateAutomaticallyTerminableApplications] }
+}
+
 /// A process identifier.
 pub type Pid = pid_t;
 
@@ -68,13 +78,6 @@ impl App {
     pub fn from_pid(pid: Pid) -> Option<App> {
         let cls: &Class = &NS_RUNNING_APPLICATION;
         unsafe { msg_send![cls, runningApplicationWithProcessIdentifier:pid] }
-    }
-
-    /// Terminates invisibly running applications as if triggered by system
-    /// memory pressure.
-    pub fn terminate_auto_terminable_apps() {
-        let cls: &Class = &NS_RUNNING_APPLICATION;
-        unsafe { msg_send![cls, terminateAutomaticallyTerminableApplications] }
     }
 
     /// Returns whether the application is currently hidden.
