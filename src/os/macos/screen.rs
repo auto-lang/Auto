@@ -1,6 +1,6 @@
 //! 📺 Screen information utilities.
 
-use super::CGSize;
+use super::{CGRect, CGSize};
 
 extern {
     fn CGMainDisplayID() -> Display;
@@ -18,11 +18,32 @@ extern {
     ) -> CGError;
 
     fn CGDisplayScreenSize(display: Display) -> CGSize;
+
+    fn CGDisplayBounds(display: Display) -> CGRect;
 }
 
 type CGError = i32;
 
 type CGDisplayListGetter = unsafe extern fn(u32, *mut Display, *mut u32) -> CGError;
+
+/// The location and dimensions of a display.
+#[derive(Copy, Clone, Debug)]
+pub struct Bounds {
+    /// Coordinates of the origin.
+    pub origin: (f64, f64),
+    /// Height and width of the bounds.
+    pub size: (f64, f64),
+}
+
+impl From<CGRect> for Bounds {
+    #[inline]
+    fn from(rect: CGRect) -> Bounds {
+        Bounds {
+            origin: (rect.origin.x, rect.origin.y),
+            size: (rect.size.width, rect.size.height),
+        }
+    }
+}
 
 /// A monitor display.
 #[repr(C)]
@@ -90,5 +111,11 @@ impl Display {
     pub fn size(self) -> (f64, f64) {
         let CGSize { width, height } = unsafe { CGDisplayScreenSize(self) };
         (width as _, height as _)
+    }
+
+    /// Returns the bounds of the display in the global coordinate space.
+    #[inline]
+    pub fn bounds(self) -> Bounds {
+        unsafe { CGDisplayBounds(self).into() }
     }
 }
