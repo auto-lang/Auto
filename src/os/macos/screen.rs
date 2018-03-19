@@ -79,18 +79,16 @@ impl From<CGRect> for Bounds {
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq)]
 pub struct Display(u32);
 
-fn displays_with(get: CGDisplayListGetter) -> Vec<Display> {
+unsafe fn write_displays(get: CGDisplayListGetter, buf: &mut Vec<Display>) {
+    buf.clear();
     let mut count = 0u32;
-    if unsafe { get(0, 0 as _, &mut count) } != 0 {
-        return Vec::new();
+    if get(0, ptr::null_mut(), &mut count) == 0 {
+        let len = count as usize;
+        buf.reserve(len);
+        if get(count, buf.as_mut_ptr(), &mut count) == 0 {
+            buf.set_len(len);
+        }
     }
-
-    let mut buffer = vec![Display(0); count as usize];
-    if unsafe { get(count, buffer.as_mut_ptr(), &mut count) } != 0 {
-        buffer.clear();
-    }
-
-    buffer
 }
 
 impl Display {
@@ -119,8 +117,11 @@ impl Display {
     /// drawable. Programs that manipulate display settings (such as gamma tables)
     /// need access to all displays, including hardware mirrors, which are not
     /// drawable.
+    #[inline]
     pub fn online() -> Vec<Display> {
-        displays_with(CGGetOnlineDisplayList)
+        let mut buf = Vec::new();
+        Self::write_online(&mut buf);
+        buf
     }
 
     /// Returns all displays that are active (or drawable).
@@ -133,8 +134,22 @@ impl Display {
     /// the primary display is active and appears in the list. When software
     /// mirroring is being used, all the mirrored displays are active and appear
     /// in the list.
+    #[inline]
     pub fn active() -> Vec<Display> {
-        displays_with(CGGetActiveDisplayList)
+        let mut buf = Vec::new();
+        Self::write_active(&mut buf);
+        buf
+    }
+
+    /// Writes all online (active, mirrored, or sleeping) displays to `buf`
+    /// after clearing it.
+    pub fn write_online(buf: &mut Vec<Display>) {
+        unsafe { write_displays(CGGetOnlineDisplayList, buf) };
+    }
+
+    /// Writes all active (or drawable) displays to `buf` after clearing it.
+    pub fn write_active(buf: &mut Vec<Display>) {
+        unsafe { write_displays(CGGetActiveDisplayList, buf) };
     }
 
     /// Returns the color at the location relative to the origin of the display.
