@@ -56,16 +56,7 @@ pub fn launch(app: &str) -> bool {
 }
 
 /// A process identifier.
-#[repr(C)]
-#[derive(Copy, Clone, Debug)]
-pub struct Pid(pub pid_t);
-
-impl From<pid_t> for Pid {
-    #[inline]
-    fn from(pid: pid_t) -> Pid {
-        Pid(pid)
-    }
-}
+pub type Pid = pid_t;
 
 /// A running application.
 #[derive(Debug)]
