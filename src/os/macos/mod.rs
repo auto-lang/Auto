@@ -30,6 +30,7 @@ mod macros;
 pub mod app;
 pub mod keyboard;
 pub mod mouse;
+pub mod screen;
 pub mod wheel;
 
 lazy_static! {
