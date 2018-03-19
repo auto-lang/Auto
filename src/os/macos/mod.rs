@@ -13,15 +13,15 @@ use objc::{Encode, Encoding};
 
 #[link(name = "Cocoa", kind = "framework")]
 extern {
-    fn CFRelease(_: NonNull);
+    fn CFRelease(_: CFObjectRef);
 
-    fn CGEventPost(tap_location: raw::c_int, event: NonNull);
+    fn CGEventPost(tap_location: raw::c_int, event: CFObjectRef);
 
-    fn CGEventCreateCopy(event: NonNull) -> CFObject;
+    fn CGEventCreateCopy(event: CFObjectRef) -> CFObject;
 
-    fn CGEventGetFlags(event: NonNull) -> EventFlags;
+    fn CGEventGetFlags(event: CFObjectRef) -> EventFlags;
 
-    fn CGEventSetFlags(event: NonNull, flags: EventFlags);
+    fn CGEventSetFlags(event: CFObjectRef, flags: EventFlags);
 }
 
 #[macro_use]
@@ -46,13 +46,14 @@ unsafe fn ns_string_encode_utf8(ns_string: Option<NSObject>) -> Option<String> {
     }
 }
 
-type NonNull = ptr::NonNull<Object>;
+type CFObjectRef = ptr::NonNull<raw::c_void>;
+type NSObjectRef = ptr::NonNull<Object>;
 
 macro_rules! impl_object {
-    ($obj:ident, $($drop:tt)+) => {
+    ($obj:ident, $inner:ty, $($drop:tt)+) => {
         #[repr(C)]
         #[derive(PartialEq, Eq, Hash)]
-        struct $obj(NonNull);
+        struct $obj($inner);
 
         impl Drop for $obj {
             #[inline]
@@ -71,11 +72,11 @@ macro_rules! impl_object {
     }
 }
 
-impl_object!(CFObject, fn drop(&mut self) {
+impl_object!(CFObject, CFObjectRef, fn drop(&mut self) {
     unsafe { CFRelease(self.0) };
 });
 
-impl_object!(NSObject, fn drop(&mut self) {
+impl_object!(NSObject, NSObjectRef, fn drop(&mut self) {
     let ptr = self.0.as_ptr();
     unsafe { msg_send![ptr, release] };
 });

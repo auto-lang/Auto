@@ -5,7 +5,7 @@ use std::os::raw;
 
 use objc::runtime::Class;
 
-use super::{CGEventType, CGEventSource, CGPoint, NonNull, NS_EVENT};
+use super::{CFObjectRef, CGEventType, CGEventSource, CGPoint, NS_EVENT};
 
 extern {
     fn CGEventCreateMouseEvent(
@@ -15,11 +15,11 @@ extern {
         mouse_button: raw::c_int,
     ) -> *mut raw::c_void;
 
-    fn CGEventGetLocation(event: NonNull) -> CGPoint;
+    fn CGEventGetLocation(event: CFObjectRef) -> CGPoint;
 
-    fn CGEventGetUnflippedLocation(event: NonNull) -> CGPoint;
+    fn CGEventGetUnflippedLocation(event: CFObjectRef) -> CGPoint;
 
-    fn CGEventSetLocation(event: NonNull, location: CGPoint);
+    fn CGEventSetLocation(event: CFObjectRef, location: CGPoint);
 
     fn CGWarpMouseCursorPosition(new_cursor_position: CGPoint) -> CGPoint;
 }
