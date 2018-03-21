@@ -154,32 +154,14 @@ impl Display {
     }
 
     /// Returns the color at the location relative to the origin of the display.
-    pub fn color_at(self, (x, y): (f64, f64)) -> Option<Rgb> {
-        let rect  = CGRect::new(x as _, y as _, 1.0, 1.0);
-        let image = unsafe { CGDisplayCreateImageForRect(self, rect) }?;
+    pub fn color_at(self, pos: (f64, f64)) -> Option<Rgb> {
+        self.colors(pos).next()
+    }
 
-        let bitmap: NSObject = NSObject::alloc(&NS_BITMAP);
-        let bitmap = bitmap.inner();
-
-        unsafe {
-            let _: NSObjectRef = msg_send![bitmap, initWithCGImage:image];
-            let color: Option<NSObject> = msg_send![bitmap, colorAtX:0usize y:0usize];
-            let color = color.as_ref()?.inner();
-
-            let mut r: CGFloat = 0.0;
-            let mut g: CGFloat = 0.0;
-            let mut b: CGFloat = 0.0;
-
-            msg_send![
-                color,
-                getRed: (&mut r)
-                green:  (&mut g)
-                blue:   (&mut b)
-                alpha:  ptr::null_mut::<CGFloat>()
-            ];
-
-            Some(Rgb { red: r as _, green: g as _, blue: b as _ })
-        }
+    /// Returns an iterator over all colors at the location relative to the
+    /// origin of the display.
+    pub fn colors(self, pos: (f64, f64)) -> Colors {
+        Colors::new(self, pos)
     }
 
     /// Returns the width and height of the display in millimeters, or 0 if the
@@ -203,6 +185,62 @@ impl Display {
             CGDisplayPixelsWide(self) as usize,
             CGDisplayPixelsHigh(self) as usize,
         ) }
+    }
+}
+
+/// An iterator over colors on a display.
+pub struct Colors {
+    /// An `NSBitmapImageRep` instance.
+    bitmap: NSObject,
+    /// The display whose origin
+    pub display: Display,
+    /// An x-y position pair.
+    pub pos: (f64, f64),
+}
+
+impl Iterator for Colors {
+    type Item = Rgb;
+
+    fn next(&mut self) -> Option<Rgb> {
+        let (x, y) = self.pos;
+        let disp   = self.display;
+        let rect   = CGRect::new(x as _, y as _, 1.0, 1.0);
+        let image  = unsafe { CGDisplayCreateImageForRect(disp, rect) }?;
+        let bitmap = self.bitmap.inner();
+
+        unsafe {
+            let _: NSObjectRef = msg_send![bitmap, initWithCGImage:image];
+            let color: Option<NSObject> = msg_send![bitmap, colorAtX:0usize y:0usize];
+            let color = color.as_ref()?.inner();
+
+            let mut r: CGFloat = 0.0;
+            let mut g: CGFloat = 0.0;
+            let mut b: CGFloat = 0.0;
+
+            msg_send![
+                color,
+                getRed: (&mut r)
+                green:  (&mut g)
+                blue:   (&mut b)
+                alpha:  ptr::null_mut::<CGFloat>()
+            ];
+
+            Some(Rgb { red: r as _, green: g as _, blue: b as _ })
+        }
+    }
+}
+
+impl From<(f64, f64)> for Colors {
+    fn from(pos: (f64, f64)) -> Colors {
+        Colors::new(Display::main(), pos)
+    }
+}
+
+impl Colors {
+    /// Creates a new instance for the display and position.
+    pub fn new(display: Display, pos: (f64, f64)) -> Colors {
+        let bitmap = NSObject::alloc(&NS_BITMAP);
+        Colors { bitmap, display, pos }
     }
 }
 
