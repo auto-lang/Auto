@@ -231,6 +231,34 @@ mod benches {
     use test::{Bencher, black_box};
 
     #[bench]
+    fn main_100(b: &mut Bencher) {
+        b.iter(|| {
+            for _ in 0..100 {
+                black_box(Display::main());
+            }
+        })
+    }
+
+    #[bench]
+    fn online_100(b: &mut Bencher) {
+        b.iter(|| {
+            for _ in 0..100 {
+                black_box(Display::online());
+            }
+        });
+    }
+
+    #[bench]
+    fn write_online_100(b: &mut Bencher) {
+        b.iter(|| {
+            let mut buf = Vec::new();
+            for _ in 0..100 {
+                Display::write_online(black_box(&mut buf));
+            }
+        });
+    }
+
+    #[bench]
     fn color_at(b: &mut Bencher) {
         let display = Display::main();
         let loc = (0.0, 0.0);
