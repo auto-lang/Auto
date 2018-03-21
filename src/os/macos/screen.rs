@@ -218,8 +218,7 @@ mod tests {
 
         for &x in &values {
             for &y in &values {
-                let color = display.color_at((x, y));
-                panic!("{:?}", color);
+                display.color_at((x, y));
             }
         }
     }
@@ -235,6 +234,19 @@ mod benches {
         b.iter(|| {
             for _ in 0..100 {
                 black_box(Display::main());
+            }
+        })
+    }
+
+    #[bench]
+    fn size_100(b: &mut Bencher) {
+        let display = Display::main();
+
+        b.iter(|| {
+            for _ in 0..100 {
+                let (x, y) = black_box(display).size();
+                black_box(x);
+                black_box(y);
             }
         })
     }
