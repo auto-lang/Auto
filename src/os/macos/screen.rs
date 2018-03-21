@@ -104,6 +104,7 @@ impl Display {
     /// In case of hardware mirroring, the drawable display becomes the main
     /// display. In case of software mirroring, the display with the highest
     /// resolution and deepest pixel depth typically becomes the main display.
+    #[inline]
     pub fn main() -> Display {
         unsafe { CGMainDisplayID() }
     }
