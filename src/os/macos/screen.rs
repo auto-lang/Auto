@@ -203,6 +203,10 @@ impl Iterator for Colors {
 
     fn next(&mut self) -> Option<Rgb> {
         let (x, y) = self.pos;
+        if !(x.is_finite() && y.is_finite()) {
+            return None;
+        }
+
         let disp   = self.display;
         let rect   = CGRect::new(x as _, y as _, 1.0, 1.0);
         let image  = unsafe { CGDisplayCreateImageForRect(disp, rect) }?;
