@@ -161,9 +161,9 @@ impl Display {
         let bitmap = bitmap.inner();
 
         unsafe {
-            let _: NSObjectRef  = msg_send![bitmap, initWithCGImage:image];
-            let color: NSObject = msg_send![bitmap, colorAtX:0usize y:0usize];
-            let color = color.inner();
+            let _: NSObjectRef = msg_send![bitmap, initWithCGImage:image];
+            let color: Option<NSObject> = msg_send![bitmap, colorAtX:0usize y:0usize];
+            let color = color.as_ref()?.inner();
 
             let mut r: CGFloat = 0.0;
             let mut g: CGFloat = 0.0;
