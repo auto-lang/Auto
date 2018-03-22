@@ -431,6 +431,7 @@ impl Iterator for Colors {
 }
 
 impl From<(f64, f64)> for Colors {
+    #[inline]
     fn from(pos: (f64, f64)) -> Colors {
         Colors::new(Display::main(), pos)
     }
