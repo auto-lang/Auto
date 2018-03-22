@@ -59,7 +59,7 @@ extern crate objc;
 pub mod color;
 
 #[cfg(target_os = "linux")]
-#[path = "os/linux.rs"]
+#[path = "os/linux/mod.rs"]
 pub mod os;
 
 #[cfg(target_os = "macos")]
@@ -67,7 +67,7 @@ pub mod os;
 pub mod os;
 
 #[cfg(target_os = "windows")]
-#[path = "os/windows.rs"]
+#[path = "os/windows/mod.rs"]
 pub mod os;
 
 mod private {
