@@ -417,15 +417,14 @@ impl Iterator for Colors {
 
         unsafe {
             let _: NSObjectRef = msg_send![bitmap, initWithCGImage:image];
-            let color: Option<NSObject> = msg_send![bitmap, colorAtX:0usize y:0usize];
-            let color = color.as_ref()?.inner();
+            let c: NSObjectRef = msg_send![bitmap, colorAtX:0usize y:0usize];
 
             let mut r: CGFloat = 0.0;
             let mut g: CGFloat = 0.0;
             let mut b: CGFloat = 0.0;
 
             msg_send![
-                color,
+                c.as_ref(),
                 getRed: (&mut r)
                 green:  (&mut g)
                 blue:   (&mut b)
