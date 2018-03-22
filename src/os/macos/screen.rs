@@ -6,7 +6,7 @@ use std::ptr;
 use libc::{boolean_t, size_t};
 use objc::runtime::Class;
 
-use super::{CGFloat, CGRect, CGSize, NSObject, NSObjectRef};
+use super::{CGRect, CGSize, NSObject, NSObjectRef};
 use color::Rgb;
 
 extern {
@@ -417,21 +417,15 @@ impl Iterator for Colors {
 
         unsafe {
             let _: NSObjectRef = msg_send![bitmap, initWithCGImage:image];
-            let c: NSObjectRef = msg_send![bitmap, colorAtX:0usize y:0usize];
 
-            let mut r: CGFloat = 0.0;
-            let mut g: CGFloat = 0.0;
-            let mut b: CGFloat = 0.0;
+            let mut pixel = [0usize; 4];
+            msg_send![bitmap, getPixel:pixel.as_mut_ptr() atX:0usize y:0usize];
 
-            msg_send![
-                c.as_ref(),
-                getRed: (&mut r)
-                green:  (&mut g)
-                blue:   (&mut b)
-                alpha:  ptr::null_mut::<CGFloat>()
-            ];
-
-            Some(Rgb { red: r as _, green: g as _, blue: b as _ })
+            Some(Rgb {
+                red:   pixel[1] as _,
+                green: pixel[2] as _,
+                blue:  pixel[3] as _,
+            })
         }
     }
 }
