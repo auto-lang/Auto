@@ -3,7 +3,7 @@
 use std::os::raw;
 use std::ptr;
 
-use libc::size_t;
+use libc::{boolean_t, size_t};
 use objc::runtime::Class;
 
 use super::{CGFloat, CGRect, CGSize, NSObject, NSObjectRef};
@@ -31,6 +31,36 @@ extern {
     fn CGDisplayPixelsHigh(display: Display) -> size_t;
 
     fn CGDisplayPixelsWide(display: Display) -> size_t;
+
+    fn CGDisplayIsActive(display: Display) -> boolean_t;
+
+    fn CGDisplayIsAsleep(display: Display) -> boolean_t;
+
+    fn CGDisplayIsBuiltin(display: Display) -> boolean_t;
+
+    fn CGDisplayIsInMirrorSet(display: Display) -> boolean_t;
+
+    fn CGDisplayIsInHWMirrorSet(display: Display) -> boolean_t;
+
+    fn CGDisplayIsMain(display: Display) -> boolean_t;
+
+    fn CGDisplayIsOnline(display: Display) -> boolean_t;
+
+    fn CGDisplayIsStereo(display: Display) -> boolean_t;
+
+    fn CGDisplayUsesOpenGLAcceleration(display: Display) -> boolean_t;
+
+    fn CGDisplayModelNumber(display: Display) -> u32;
+
+    fn CGDisplaySerialNumber(display: Display) -> u32;
+
+    fn CGDisplayUnitNumber(display: Display) -> u32;
+
+    fn CGDisplayVendorNumber(display: Display) -> u32;
+
+    fn CGDisplayPrimaryDisplay(display: Display) -> Display;
+
+    fn CGDisplayRotation(display: Display) -> f64;
 
     fn CGDisplayCreateImageForRect(display: Display, rect: CGRect) -> Option<CGImage>;
 
@@ -153,6 +183,173 @@ impl Display {
         unsafe { write_displays(CGGetActiveDisplayList, buf) };
     }
 
+    /// Returns whether the display is active.
+    ///
+    /// An active display is connected, awake, and available for drawing. In a
+    /// hardware mirroring set, only the primary display is active.
+    #[inline]
+    pub fn is_active(self) -> bool {
+        unsafe { CGDisplayIsActive(self) != 0 }
+    }
+
+
+    /// Returns whether the display is sleeping, and is therefore not drawable.
+    #[inline]
+    pub fn is_asleep(self) -> bool {
+        unsafe { CGDisplayIsAsleep(self) != 0 }
+    }
+
+    /// Returns whether the display is built-in, such as the internal display in
+    /// portable systems.
+    ///
+    /// Portable systems typically identify the internal LCD panel as a built-in
+    /// display. Note that it is possible and reasonable for a system to have no
+    /// displays marked as built-in. For example, a portable system running with
+    /// the lid closed may report no built-in displays.
+    #[inline]
+    pub fn is_builtin(self) -> bool {
+        unsafe { CGDisplayIsBuiltin(self) != 0 }
+    }
+
+    /// Returns whether the display is in a mirroring set (software or
+    /// hardware).
+    #[inline]
+    pub fn in_mirror_set(self) -> bool {
+        unsafe { CGDisplayIsInMirrorSet(self) != 0 }
+    }
+
+    /// Returns whether the display is in a hardware mirroring set.
+    ///
+    /// When hardware mirroring is enabled, the contents of a single framebuffer
+    /// are rendered in all displays in the hardware mirroring set. All drawing
+    /// operations are directed to the primary display in the set.
+    #[inline]
+    pub fn in_hw_mirror_set(self) -> bool {
+        unsafe { CGDisplayIsInHWMirrorSet(self) != 0 }
+    }
+
+    /// Returns whether this display is the main display.
+    #[inline]
+    pub fn is_main(self) -> bool {
+        unsafe { CGDisplayIsMain(self) != 0 }
+    }
+
+    /// Returns whether this display is connected or online.
+    ///
+    /// A display is considered connected or online when the framebuffer
+    /// hardware is connected to a monitor.
+    ///
+    /// You can use this function to determine whether someone has plugged a
+    /// display into the system while the main power was on. This hardware
+    /// feature, called _hot-plugging_, may not be present on all displays.
+    #[inline]
+    pub fn is_online(self) -> bool {
+        unsafe { CGDisplayIsOnline(self) != 0 }
+    }
+
+    /// Returns whether the display is running in a stereo graphics mode.
+    #[inline]
+    pub fn is_stereo(self) -> bool {
+        unsafe { CGDisplayIsStereo(self) != 0 }
+    }
+
+    /// Returns whether Quartz is using OpenGL-based window acceleration (Quartz
+    /// Extreme) to render in a display.
+    ///
+    /// Quartz Extreme is an OpenGL-based, hardware-accelerated window
+    /// compositor available in macOS 10.2 and later. Quartz Extreme requires a
+    /// minimum hardware configuration to operate.
+    ///
+    /// The information this function provides is typically used to adjust the
+    /// demands of drawing operations to the capabilities of the display
+    /// hardware. For example, an application running on an unaccelerated system
+    /// could disable live window-resizing.
+    #[inline]
+    pub fn uses_open_gl(self) -> bool {
+        unsafe { CGDisplayUsesOpenGLAcceleration(self) != 0 }
+    }
+
+    /// Returns the model number of the display's monitor.
+    ///
+    /// This function uses I/O Kit to identify the monitor associated with the
+    /// specified display. The return value depends on the following:
+    ///
+    /// - If I/O Kit can identify the monitor, the product ID code for the
+    ///   monitor is returned.
+    ///
+    /// - If I/O Kit can’t identify the monitor, `0x717`
+    ///   (`kDisplayProductIDGeneric`) is returned.
+    ///
+    /// - If no monitor is connected, a value of `0xFFFFFFFF` is returned.
+    #[inline]
+    pub fn model_number(self) -> u32 {
+        unsafe { CGDisplayModelNumber(self) }
+    }
+
+    ///
+    ///
+    /// This function uses I/O Kit to identify the monitor associated with the
+    /// specified display.
+    ///
+    /// If I/O Kit can identify the monitor:
+    ///
+    /// - If the manufacturer has encoded a serial number for the monitor, the
+    ///   number is returned.
+    ///
+    /// - If there is no encoded serial number, `0x00000000` is returned.
+    ///
+    /// If I/O Kit cannot identify the monitor:
+    ///
+    /// - If a monitor is connected to the display, `0x00000000` is returned.
+    ///
+    /// - If no monitor is connected to the display hardware, `0xFFFFFFFF` is
+    ///   returned.
+    ///
+    /// Note that a serial number is meaningful only in conjunction with a
+    /// specific vendor and product or model.
+    #[inline]
+    pub fn serial_number(self) -> u32 {
+        unsafe { CGDisplaySerialNumber(self) }
+    }
+
+    /// Returns the logical unit number of the display.
+    ///
+    /// The logical unit number represents a particular node in the I/O Kit
+    /// device tree associated with the display’s framebuffer.
+    ///
+    /// For a particular hardware configuration, this value will not change when
+    /// the attached monitor is changed. The number will change, though, if the
+    /// I/O Kit device tree changes, for example, when hardware is reconfigured,
+    /// drivers are replaced, or significant changes occur to I/O Kit. Therefore
+    /// keep in mind that this number may vary across login sessions.
+    #[inline]
+    pub fn unit_number(self) -> u32 {
+        unsafe { CGDisplayUnitNumber(self) }
+    }
+
+    /// Returns the vendor number of the display's monitor.
+    ///
+    /// This function uses I/O Kit to identify the monitor associated with the
+    /// specified display.
+    ///
+    /// - If I/O Kit can identify the monitor, the vendor ID is returned.
+    ///
+    /// - If I/O Kit cannot identify the monitor, kDisplayVendorIDUnknown is
+    ///   returned.
+    ///
+    /// If there is no monitor associated with the display, `0xFFFFFFFF` is
+    /// returned.
+    #[inline]
+    pub fn vendor_number(self) -> u32 {
+        unsafe { CGDisplayVendorNumber(self) }
+    }
+
+    /// Returns the rotation angle of the display in degrees.
+    #[inline]
+    pub fn rotation(self) -> f64 {
+        unsafe { CGDisplayRotation(self) }
+    }
+
     /// Returns the color at the location relative to the origin of the display.
     pub fn color_at(self, pos: (f64, f64)) -> Option<Rgb> {
         self.colors(pos).next()
@@ -185,6 +382,12 @@ impl Display {
             CGDisplayPixelsWide(self) as usize,
             CGDisplayPixelsHigh(self) as usize,
         ) }
+    }
+
+    /// Returns the primary display in a hardware mirroring set.
+    #[inline]
+    pub fn primary(self) -> Display {
+        unsafe { CGDisplayPrimaryDisplay(self) }
     }
 }
 
@@ -251,6 +454,17 @@ impl Colors {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn display_main() {
+        assert!(Display::main().is_main());
+    }
+
+    #[test]
+    fn display_primary() {
+        let main = Display::main();
+        assert_eq!(main, main.primary());
+    }
 
     #[test]
     fn color_at() {
