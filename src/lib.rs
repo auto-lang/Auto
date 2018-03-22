@@ -56,6 +56,9 @@ extern crate libc;
 #[macro_use]
 extern crate objc;
 
+#[cfg(target_os = "windows")]
+extern crate winapi;
+
 pub mod color;
 
 #[cfg(target_os = "linux")]
