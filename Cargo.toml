@@ -7,6 +7,7 @@ repository = "https://github.com/nvzqz/Auto"
 documentation = "https://docs.rs/auto/"
 keywords = ["cross-platform", "automation"]
 description = "Cross-platform input event automation facilities."
+readme = "README.md"
 include = ["Cargo.toml", "src/**/*.rs", "README.md", "CHANGELOG.md", "LICENSE*"]
 
 [badges]
