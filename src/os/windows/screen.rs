@@ -7,7 +7,7 @@ use winapi::um::winuser;
 
 use color::Rgb;
 
- /// Returns the color on the screen at `x` and `y`.
+/// Returns the color on the screen at `x` and `y`.
 pub fn color_at((x, y): (usize, usize)) -> Option<Rgb> {
     unsafe {
         let hdc = winuser::GetDC(ptr::null_mut());
