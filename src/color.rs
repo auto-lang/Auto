@@ -11,22 +11,18 @@ macro_rules! impl_color {
         impl<T> From<[T; $size]> for $t<T> {
             #[inline]
             fn from(arr: [T; $size]) -> Self {
-                unsafe {
-                    let val = mem::transmute_copy(&arr);
-                    mem::forget(arr);
-                    val
-                }
+                let val = unsafe { mem::transmute_copy(&arr) };
+                mem::forget(arr);
+                val
             }
         }
 
         impl<T> Into<[T; $size]> for $t<T> {
             #[inline]
             fn into(self) -> [T; $size] {
-                unsafe {
-                    let val = mem::transmute_copy(&self);
-                    mem::forget(self);
-                    val
-                }
+                let val = unsafe { mem::transmute_copy(&self) };
+                mem::forget(self);
+                val
             }
         }
 
