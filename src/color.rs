@@ -20,19 +20,33 @@ macro_rules! impl_color {
             }
         }
 
+        impl AsRef<[u8; $size]> for $t {
+            #[inline]
+            fn as_ref(&self) -> &[u8; $size] {
+                let ptr = self as *const Self as *const [u8; $size];
+                unsafe { &*ptr }
+            }
+        }
+
+        impl AsMut<[u8; $size]> for $t {
+            #[inline]
+            fn as_mut(&mut self) -> &mut [u8; $size] {
+                let ptr = self as *mut Self as *mut [u8; $size];
+                unsafe { &mut *ptr }
+            }
+        }
+
         impl AsRef<[u8]> for $t {
             #[inline]
             fn as_ref(&self) -> &[u8] {
-                let ptr = self as *const Self as *const [u8; $size];
-                unsafe { &*ptr }
+                AsRef::<[u8; $size]>::as_ref(self)
             }
         }
 
         impl AsMut<[u8]> for $t {
             #[inline]
             fn as_mut(&mut self) -> &mut [u8] {
-                let ptr = self as *mut Self as *mut [u8; $size];
-                unsafe { &mut *ptr }
+                AsMut::<[u8; $size]>::as_mut(self)
             }
         }
 
