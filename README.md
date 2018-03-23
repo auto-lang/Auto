@@ -4,7 +4,7 @@
 [![AppVeyor Status][appv-badge]][appv]
 ![LoC](https://tokei.rs/b1/github/nvzqz/Auto)
 
-Cross-platform facilities designed for easy automation.
+Cross-platform UI/input event automation facilities.
 
 ## License
 
