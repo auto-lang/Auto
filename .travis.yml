@@ -13,5 +13,7 @@ matrix:
     # Clippy lints
     - rust: nightly
       env: CLIPPY="true"
+      install:
+        - cargo install clippy --debug --force
 
 script: ./travis.sh
