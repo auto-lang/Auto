@@ -1,9 +1,5 @@
 //! Cross-platform input event automation facilities.
 //!
-//! This crate provides both high-level (any OS) and low level (per-OS)
-//! functionality. See [the `os` module](./os/index.html) for APIs specific to
-//! the current operating system.
-//!
 //! # Usage
 //!
 //! This crate is available [on crates.io](https://crates.io/crates/auto) and
@@ -22,14 +18,12 @@
 //!
 //! # Cross-Platform Compatibility
 //!
-//! Auto aims to work on macOS, Windows, and Linux. This project is open to
-//! adding more operating systems in the future.
-//!
-//! | Platform | Support |
-//! | :------- | :------ |
-//! | [Linux](https://docs.rs/auto/0.0.6/x86_64-unknown-linux-gnu/auto/os/) | **pending** |
-//! | [macOS](https://docs.rs/auto/0.0.6/x86_64-apple-darwin/auto/os/) | **yes** |
-//! | [Windows](https://docs.rs/auto/0.0.6/x86_64-pc-windows-msvc/auto/os/) | **pending** |
+//! This crate provides both high-level (any OS) and low level (per-OS)
+//! functionality. See [the `os` module](./os/index.html) for APIs specific to
+//! the current operating system:
+//! [Linux](https://docs.rs/auto/0.0.6/x86_64-unknown-linux-gnu/auto/os/),
+//! [macOS](https://docs.rs/auto/0.0.6/x86_64-apple-darwin/auto/os/), or
+//! [Windows](https://docs.rs/auto/0.0.6/x86_64-pc-windows-msvc/auto/os/).
 //!
 //! [crate]: https://crates.io/crates/auto
 
