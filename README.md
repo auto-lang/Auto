@@ -1,20 +1,15 @@
 # Auto
 
-[![Travis Status][travis-badge]][travis]
-[![AppVeyor Status][appv-badge]][appv]
 ![LoC](https://tokei.rs/b1/github/nvzqz/Auto)
 
 Cross-platform UI/input event automation facilities.
 
 ## Cross-Platform Compatibility
 
-Auto works on, is tested against, and has documentation for the following platforms:
-
-- [Linux](https://docs.rs/auto/*/x86_64-unknown-linux-gnu/auto/)
-
-- [macOS](https://docs.rs/auto/*/x86_64-apple-darwin/auto/)
-
-- [Windows](https://docs.rs/auto/*/x86_64-pc-windows-msvc/auto/)
+| Build Status | Platforms |
+| :----------: | :-------: |
+| [![Travis Status][travis-badge]][travis] | [Linux], [macOS] |
+| [![AppVeyor Status][appv-badge]][appv]   | [Windows]        |
 
 ## License
 
@@ -25,6 +20,10 @@ Auto is licensed under either of
 - MIT License ([`LICENSE-MIT`] or http://opensource.org/licenses/MIT)
 
 at your option.
+
+[macOS]: https://docs.rs/auto/*/x86_64-apple-darwin/auto/
+[Linux]: https://docs.rs/auto/*/x86_64-unknown-linux-gnu/auto/
+[Windows]: https://docs.rs/auto/*/x86_64-pc-windows-msvc/auto/
 
 [travis]:       https://travis-ci.org/nvzqz/Auto
 [travis-badge]: https://travis-ci.org/nvzqz/Auto.svg?branch=master
