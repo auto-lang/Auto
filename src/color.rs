@@ -1,7 +1,7 @@
 //! 🎨 Color utilities.
 
 /// A simple RGB color.
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Rgb {
     /// The amount of red, ranging from 0 to 255.
     pub red: u8,
