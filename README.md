@@ -1,5 +1,6 @@
 # Auto
 
+![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macos%20%7C%20windows-lightgrey.svg)
 ![LoC](https://tokei.rs/b1/github/nvzqz/Auto)
 
 Cross-platform UI/input event automation facilities.
