@@ -6,6 +6,16 @@
 
 Cross-platform UI/input event automation facilities.
 
+## Cross-Platform Compatibility
+
+Auto works on, is tested against, and has documentation for the following platforms:
+
+- [Linux](https://docs.rs/auto/*/x86_64-unknown-linux-gnu/auto/)
+
+- [macOS](https://docs.rs/auto/*/x86_64-apple-darwin/auto/)
+
+- [Windows](https://docs.rs/auto/*/x86_64-pc-windows-msvc/auto/)
+
 ## License
 
 Auto is licensed under either of
