@@ -7,7 +7,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! auto = "0.0.7"
+//! auto = "0.0.8"
 //! ```
 //!
 //! and this to your crate root:
@@ -23,11 +23,11 @@
 //!
 //! - The `os` module provides APIs specific to the current operating system
 //!
-//!   - [Linux](https://docs.rs/auto/0.0.7/x86_64-unknown-linux-gnu/auto/os/)
+//!   - [Linux](https://docs.rs/auto/0.0.8/x86_64-unknown-linux-gnu/auto/os/)
 //!
-//!   - [macOS](https://docs.rs/auto/0.0.7/x86_64-apple-darwin/auto/os/)
+//!   - [macOS](https://docs.rs/auto/0.0.8/x86_64-apple-darwin/auto/os/)
 //!
-//!   - [Windows](https://docs.rs/auto/0.0.7/x86_64-pc-windows-msvc/auto/os/)
+//!   - [Windows](https://docs.rs/auto/0.0.8/x86_64-pc-windows-msvc/auto/os/)
 //!
 //! - All other modules work with any operating system
 //!
