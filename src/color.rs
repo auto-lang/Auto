@@ -7,54 +7,62 @@ use std::slice;
 const FLOAT_RATIO: f64 = 255.0;
 
 macro_rules! impl_color {
-    ($t:ty; $size:expr) => {
-        impl From<[u8; $size]> for $t {
+    ($t:ident; $size:expr) => {
+        impl<T> From<[T; $size]> for $t<T> {
             #[inline]
-            fn from(arr: [u8; $size]) -> Self {
-                unsafe { mem::transmute(arr) }
+            fn from(arr: [T; $size]) -> Self {
+                unsafe {
+                    let val = mem::transmute_copy(&arr);
+                    mem::forget(arr);
+                    val
+                }
             }
         }
 
-        impl From<$t> for [u8; $size] {
+        impl<T> Into<[T; $size]> for $t<T> {
             #[inline]
-            fn from(color: $t) -> Self {
-                unsafe { mem::transmute(color) }
+            fn into(self) -> [T; $size] {
+                unsafe {
+                    let val = mem::transmute_copy(&self);
+                    mem::forget(self);
+                    val
+                }
             }
         }
 
-        impl AsRef<[u8; $size]> for $t {
+        impl<T> AsRef<[T; $size]> for $t<T> {
             #[inline]
-            fn as_ref(&self) -> &[u8; $size] {
-                let ptr = self as *const Self as *const [u8; $size];
+            fn as_ref(&self) -> &[T; $size] {
+                let ptr = self as *const Self as *const [T; $size];
                 unsafe { &*ptr }
             }
         }
 
-        impl AsMut<[u8; $size]> for $t {
+        impl<T> AsMut<[T; $size]> for $t<T> {
             #[inline]
-            fn as_mut(&mut self) -> &mut [u8; $size] {
-                let ptr = self as *mut Self as *mut [u8; $size];
+            fn as_mut(&mut self) -> &mut [T; $size] {
+                let ptr = self as *mut Self as *mut [T; $size];
                 unsafe { &mut *ptr }
             }
         }
 
-        impl AsRef<[u8]> for $t {
+        impl<T> AsRef<[T]> for $t<T> {
             #[inline]
-            fn as_ref(&self) -> &[u8] {
-                AsRef::<[u8; $size]>::as_ref(self)
+            fn as_ref(&self) -> &[T] {
+                AsRef::<[T; $size]>::as_ref(self)
             }
         }
 
-        impl AsMut<[u8]> for $t {
+        impl<T> AsMut<[T]> for $t<T> {
             #[inline]
-            fn as_mut(&mut self) -> &mut [u8] {
-                AsMut::<[u8; $size]>::as_mut(self)
+            fn as_mut(&mut self) -> &mut [T] {
+                AsMut::<[T; $size]>::as_mut(self)
             }
         }
 
         // Clippy lint
         #[allow(derive_hash_xor_eq)]
-        impl hash::Hash for $t {
+        impl hash::Hash for $t<u8> {
             #[inline]
             fn hash<H: hash::Hasher>(&self, state: &mut H) {
                 state.write(self.as_ref());
@@ -68,8 +76,8 @@ macro_rules! impl_color {
             }
         }
     };
-    ($t:ty) => {
-        impl_color! { $t; mem::size_of::<$t>() }
+    ($t:ident) => {
+        impl_color! { $t; mem::size_of::<$t<u8>>() }
     };
 }
 
