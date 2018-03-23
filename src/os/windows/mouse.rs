@@ -18,9 +18,11 @@ pub fn location() -> Option<Location> {
     }
 }
 
-/// Moves the cursor to the specified screen coordinates. If the new coordinates
-/// are not within the screen rectangle, the system automatically adjusts the
-/// coordinates so that the cursor stays within the rectangle.
+/// Moves the cursor to the specified screen coordinates.
+///
+/// If the new coordinates are not within the screen rectangle, the system
+/// automatically adjusts the coordinates so that the cursor stays within the
+/// rectangle.
 ///
 /// The calling process must have `WINSTA_WRITEATTRIBUTES` access to the window
 /// station.
