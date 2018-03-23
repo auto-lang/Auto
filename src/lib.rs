@@ -22,11 +22,15 @@
 //! (per-OS) functionality:
 //!
 //! - [The `os` module](./os/index.html) provides APIs specific to the current
-//! OS—[Linux](https://docs.rs/auto/0.0.6/x86_64-unknown-linux-gnu/auto/os/),
-//! [macOS](https://docs.rs/auto/0.0.6/x86_64-apple-darwin/auto/os/), or
-//! [Windows](https://docs.rs/auto/0.0.6/x86_64-pc-windows-msvc/auto/os/).
+//! OS
 //!
-//! - APIs in all other modules work with every operating system.
+//!   - [Linux](https://docs.rs/auto/0.0.6/x86_64-unknown-linux-gnu/auto/os/)
+//!
+//!   - [macOS](https://docs.rs/auto/0.0.6/x86_64-apple-darwin/auto/os/)
+//!
+//!   - [Windows](https://docs.rs/auto/0.0.6/x86_64-pc-windows-msvc/auto/os/)
+//!
+//! - APIs in all other modules work with every OS
 //!
 //! [crate]: https://crates.io/crates/auto
 
