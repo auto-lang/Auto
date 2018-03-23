@@ -73,7 +73,7 @@ macro_rules! impl_color {
     };
 }
 
-/// A simple RGB color.
+/// A simple ***Red-Green-Blue*** color triplet.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[repr(C)]
 pub struct Rgb<T: RgbComponent = u8> {
