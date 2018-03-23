@@ -1,8 +1,10 @@
 //! 🎨 Color utilities.
 
+use std::hash;
 use std::mem;
+use std::slice;
 
-macro_rules! impl_convert {
+macro_rules! impl_color {
     ($t:ty; $size:expr) => {
         impl From<[u8; $size]> for $t {
             #[inline]
@@ -33,9 +35,23 @@ macro_rules! impl_convert {
                 unsafe { &mut *ptr }
             }
         }
+
+        impl hash::Hash for $t {
+            #[inline]
+            fn hash<H: hash::Hasher>(&self, state: &mut H) {
+                state.write(self.as_ref());
+            }
+
+            #[inline]
+            fn hash_slice<H: hash::Hasher>(data: &[Self], state: &mut H) {
+                let len = mem::size_of_val(data);
+                let ptr = data.as_ptr() as *const u8;
+                state.write(unsafe { slice::from_raw_parts(ptr, len) });
+            }
+        }
     };
     ($t:ty) => {
-        impl_convert! { $t; mem::size_of::<$t>() }
+        impl_color! { $t; mem::size_of::<$t>() }
     };
 }
 
@@ -51,4 +67,4 @@ pub struct Rgb {
     pub blue: u8,
 }
 
-impl_convert! { Rgb }
+impl_color! { Rgb }
