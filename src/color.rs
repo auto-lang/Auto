@@ -109,9 +109,9 @@ impl<T: RgbComponent> Rgb<T> {
     /// Normalizes `self` in-place between `T`'s upper and lower bounds.
     #[inline]
     pub fn normalize(&mut self) {
-        self.red.normalize();
-        self.green.normalize();
-        self.blue.normalize();
+        for comp in AsMut::<[T]>::as_mut(self) {
+            comp.normalize();
+        }
     }
 
     forward_method! {
