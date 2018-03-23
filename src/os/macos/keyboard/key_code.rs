@@ -10,9 +10,7 @@
 
 macro_rules! keys {
     ($($name:ident = $val:expr,)+) => {
-        $(
-            pub const $name: u16 = $val;
-        )+
+        $(pub const $name: u16 = $val;)+
     };
 }
 
