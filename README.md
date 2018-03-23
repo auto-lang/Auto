@@ -4,8 +4,6 @@
 
 Cross-platform UI/input event automation facilities.
 
-## Cross-Platform Compatibility
-
 | Build Status | Platforms |
 | :----------: | :-------: |
 | [![Travis Status][travis-badge]][travis] | [Linux], [macOS] |
