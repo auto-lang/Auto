@@ -142,7 +142,7 @@ impl RgbComponent for u8 {
     fn normalize(self) -> u8 { self }
 
     #[inline]
-    fn into_float(self) -> f64 { self as f64 / 255.0 }
+    fn into_float(self) -> f64 { f64::from(self) / 255.0 }
 
     #[inline]
     fn into_byte(self) -> u8 { self }
@@ -155,7 +155,7 @@ impl RgbComponent for f32 {
     }
 
     #[inline]
-    fn into_float(self) -> f64 { self as f64 }
+    fn into_float(self) -> f64 { self.into() }
 
     #[inline]
     fn into_byte(self) -> u8 {
