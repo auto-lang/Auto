@@ -19,7 +19,7 @@ libc = "0.2"
 objc = "0.2"
 
 [target."cfg(target_os = \"windows\")".dependencies]
-winapi = "0.3.4"
+winapi = { version = "0.3.4", features = ["windef", "winuser"] }
 
 [build-dependencies]
 version_check = "0.1"
