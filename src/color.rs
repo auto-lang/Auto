@@ -101,62 +101,64 @@ macro_rules! forward_method {
 
 impl<T: RgbComponent> Rgb<T> {
     forward_method! {
-        "Returns an RGB value with `f64` components between 0.0 and 1.0.",
-        normalize, f64
+        "Returns an RGB value with its components strictly between the lower and
+        upper bounds.",
+        normalize, T
     }
 
     forward_method! {
         "Returns an RGB value with `f64` components that are not guaranteed to
-        be normalized",
-        to_float, f64
+        be normalized.",
+        into_float, f64
     }
 
     forward_method! {
         "Returns an RGB value with `u8` components where 0 and 255 correspond to
-        0.0 and 1.0 respectively.",
-        to_byte, u8
+        0.0 and 1.0 respectively.
+
+        Keep in mind that the `self` may not be normalized, which may result in
+        strange results.",
+        into_byte, u8
     }
 }
 
 /// A type that can be used as a component of [`Rgb`](struct.Rgb.html).
 pub trait RgbComponent {
-    /// Normalizes `self` to a value between 0.0 and 1.0.
-    fn normalize(self) -> f64 where Self: Sized;
+    /// Normalizes `self` to a value between its upper and lower bounds.
+    fn normalize(self) -> Self where Self: Sized;
 
     /// Returns `self` as a floating point value, not guaranteed to be
     /// normalized.
     #[inline]
-    fn to_float(self) -> f64 where Self: Sized {
-        self.normalize()
-    }
+    fn into_float(self) -> f64 where Self: Sized;
 
-    /// Returns `self` as a byte value
-    fn to_byte(self) -> u8 where Self: Sized;
+    /// Returns `self` as a byte value. For reasonable results, it may be worth
+    /// normalizing the value beforehand.
+    fn into_byte(self) -> u8 where Self: Sized;
 }
 
 impl RgbComponent for u8 {
     #[inline]
-    fn normalize(self) -> f64 {
-        (self as f64) / 255.0
-    }
+    fn normalize(self) -> u8 { self }
 
     #[inline]
-    fn to_byte(self) -> u8 {
-        self
-    }
+    fn into_float(self) -> f64 { self as f64 / 255.0 }
+
+    #[inline]
+    fn into_byte(self) -> u8 { self }
 }
 
 impl RgbComponent for f32 {
     #[inline]
-    fn normalize(self) -> f64 {
-        self.max(0.0).min(1.0).to_float()
+    fn normalize(self) -> f32 {
+        self.max(0.0).min(1.0)
     }
 
     #[inline]
-    fn to_float(self) -> f64 { self as f64 }
+    fn into_float(self) -> f64 { self as f64 }
 
     #[inline]
-    fn to_byte(self) -> u8 {
+    fn into_byte(self) -> u8 {
         (self.normalize() * 255.0) as u8
     }
 }
@@ -168,10 +170,10 @@ impl RgbComponent for f64 {
     }
 
     #[inline]
-    fn to_float(self) -> f64 { self }
+    fn into_float(self) -> f64 { self }
 
     #[inline]
-    fn to_byte(self) -> u8 {
+    fn into_byte(self) -> u8 {
         (self.normalize() * 255.0) as u8
     }
 }
