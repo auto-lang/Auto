@@ -1,7 +1,5 @@
 //! 🖱️ Mouse automation utilities.
 
-use std::mem;
-
 use winapi::shared::windef::POINT;
 use winapi::um::winuser::{GetCursorPos, SetCursorPos};
 
@@ -11,7 +9,7 @@ use winapi::um::winuser::{GetCursorPos, SetCursorPos};
 /// station.
 pub fn location() -> Option<Location> {
     unsafe {
-        let mut point = mem::uninitialized::<POINT>();
+        let mut point = POINT { x: 0, y: 0 };
         if GetCursorPos(&mut point) != 0 {
             Some((point.x as _, point.y as _))
         } else {
