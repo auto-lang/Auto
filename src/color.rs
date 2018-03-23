@@ -36,6 +36,8 @@ macro_rules! impl_color {
             }
         }
 
+        // Clippy lint
+        #[allow(derive_hash_xor_eq)]
         impl hash::Hash for $t {
             #[inline]
             fn hash<H: hash::Hasher>(&self, state: &mut H) {

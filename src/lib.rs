@@ -35,6 +35,7 @@
 
 #![cfg_attr(all(test, nightly), feature(test))]
 
+#![allow(unknown_lints)]
 #![deny(missing_docs)]
 
 #[cfg(all(test, nightly))]
