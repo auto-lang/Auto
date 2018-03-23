@@ -131,7 +131,6 @@ pub trait RgbComponent {
 
     /// Returns `self` as a floating point value, not guaranteed to be
     /// normalized.
-    #[inline]
     fn into_float(self) -> f64 where Self: Sized;
 
     /// Returns `self` as a byte value. For reasonable results, it may be worth
