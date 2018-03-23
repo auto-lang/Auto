@@ -19,11 +19,14 @@
 //! # Cross-Platform Compatibility
 //!
 //! This crate provides both high-level (any operating system) and low level
-//! (per-OS) functionality. See [the `os` module](./os/index.html) for APIs
-//! specific to the current
+//! (per-OS) functionality:
+//!
+//! - [The `os` module](./os/index.html) provides APIs specific to the current
 //! OS—[Linux](https://docs.rs/auto/0.0.6/x86_64-unknown-linux-gnu/auto/os/),
 //! [macOS](https://docs.rs/auto/0.0.6/x86_64-apple-darwin/auto/os/), or
 //! [Windows](https://docs.rs/auto/0.0.6/x86_64-pc-windows-msvc/auto/os/).
+//!
+//! - APIs in all other modules work with every operating system.
 //!
 //! [crate]: https://crates.io/crates/auto
 
