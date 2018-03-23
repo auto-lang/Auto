@@ -102,10 +102,18 @@ macro_rules! forward_method {
 }
 
 impl<T: RgbComponent> Rgb<T> {
+    /// Normalizes `self` in-place between `T`'s upper and lower bounds.
+    #[inline]
+    pub fn normalize(&mut self) {
+        self.red.normalize();
+        self.green.normalize();
+        self.blue.normalize();
+    }
+
     forward_method! {
         "Returns an RGB value with its components strictly between the lower and
         upper bounds.",
-        normalize, T
+        normalized, T
     }
 
     forward_method! {
@@ -126,8 +134,11 @@ impl<T: RgbComponent> Rgb<T> {
 
 /// A type that can be used as a component of [`Rgb`](struct.Rgb.html).
 pub trait RgbComponent {
-    /// Normalizes `self` to a value between its upper and lower bounds.
-    fn normalize(self) -> Self where Self: Sized;
+    /// Normalizes `self` in-place between `T`'s upper and lower bounds.
+    fn normalize(&mut self);
+
+    /// Returns `self` normalized between `T`'s upper and lower bounds.
+    fn normalized(self) -> Self where Self: Sized;
 
     /// Returns `self` as a floating point value, not guaranteed to be
     /// normalized.
@@ -140,7 +151,12 @@ pub trait RgbComponent {
 
 impl RgbComponent for u8 {
     #[inline]
-    fn normalize(self) -> u8 { self }
+    fn normalize(&mut self) {
+        *self = self.normalized();
+    }
+
+    #[inline]
+    fn normalized(self) -> u8 { self }
 
     #[inline]
     fn into_float(self) -> f64 { f64::from(self) / FLOAT_RATIO }
@@ -151,7 +167,12 @@ impl RgbComponent for u8 {
 
 impl RgbComponent for f32 {
     #[inline]
-    fn normalize(self) -> f32 {
+    fn normalize(&mut self) {
+        *self = self.normalized();
+    }
+
+    #[inline]
+    fn normalized(self) -> f32 {
         self.max(0.0).min(1.0)
     }
 
@@ -160,13 +181,18 @@ impl RgbComponent for f32 {
 
     #[inline]
     fn into_byte(self) -> u8 {
-        (self.normalize() * (FLOAT_RATIO as f32)) as u8
+        (self.normalized() * (FLOAT_RATIO as f32)) as u8
     }
 }
 
 impl RgbComponent for f64 {
     #[inline]
-    fn normalize(self) -> f64 {
+    fn normalize(&mut self) {
+        *self = self.normalized();
+    }
+
+    #[inline]
+    fn normalized(self) -> f64 {
         self.max(0.0).min(1.0)
     }
 
@@ -175,6 +201,6 @@ impl RgbComponent for f64 {
 
     #[inline]
     fn into_byte(self) -> u8 {
-        (self.normalize() * FLOAT_RATIO) as u8
+        (self.normalized() * FLOAT_RATIO) as u8
     }
 }
