@@ -15,5 +15,8 @@ matrix:
       env: CLIPPY="true"
       install:
         - cargo install clippy --debug --force
+      script:
+        - cargo clippy -- -Dclippy
 
-script: ./travis.sh
+script:
+  - cargo test
