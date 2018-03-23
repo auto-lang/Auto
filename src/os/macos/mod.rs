@@ -1,5 +1,3 @@
-//! 🏎️ macOS-specific functionality.
-
 #![allow(improper_ctypes)]
 #![allow(non_snake_case)]
 

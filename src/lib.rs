@@ -60,17 +60,6 @@ extern crate objc;
 extern crate winapi;
 
 pub mod color;
-
-#[cfg(target_os = "linux")]
-#[path = "os/linux/mod.rs"]
-pub mod os;
-
-#[cfg(target_os = "macos")]
-#[path = "os/macos/mod.rs"]
-pub mod os;
-
-#[cfg(target_os = "windows")]
-#[path = "os/windows/mod.rs"]
 pub mod os;
 
 mod private {
