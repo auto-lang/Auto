@@ -1,6 +1,6 @@
 # Auto
 
-![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macos%20%7C%20windows-lightgrey.svg)
+[![Platform][plat-badge]][plat]
 ![LoC](https://tokei.rs/b1/github/nvzqz/Auto)
 
 Cross-platform UI/input event automation facilities.
@@ -28,6 +28,8 @@ at your option.
 [travis-badge]: https://travis-ci.org/nvzqz/Auto.svg?branch=master
 [appv]:         https://ci.appveyor.com/project/nvzqz/Auto
 [appv-badge]:   https://ci.appveyor.com/api/projects/status/github/nvzqz/Auto?svg=true
+[plat]:         https://docs.rs/auto/*/auto/#cross-platform-compatibility
+[plat-badge]:   https://img.shields.io/badge/platform-linux%20%7C%20macos%20%7C%20windows-lightgrey.svg
 
 [`LICENSE-APACHE`]: https://github.com/nvzqz/Auto/blob/master/LICENSE-APACHE
 [`LICENSE-MIT`]:    https://github.com/nvzqz/Auto/blob/master/LICENSE-MIT
