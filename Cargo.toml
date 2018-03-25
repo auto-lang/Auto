@@ -19,11 +19,11 @@ bitflags    = "1.0"
 cfg-if      = "0.1"
 lazy_static = "1.0"
 
-[target."cfg(target_os = \"macos\")".dependencies]
+[target.'cfg(target_os = "macos")'.dependencies]
 libc = "0.2"
 objc = "0.2"
 
-[target."cfg(target_os = \"windows\")".dependencies]
+[target.'cfg(target_os = "windows")'.dependencies]
 winapi = { version = "0.3.4", features = ["windef", "winuser"] }
 
 [build-dependencies]
